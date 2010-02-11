@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config>
 	<option name="app-name">intranet</option>
-	<option name="db-conn">jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=office.altsoft.spb.ru)(PORT = 1522))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = ORCL)))</option>
+	<option name="db-conn">jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=195.131.100.227)(PORT = 1521))(CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = ORCL)))</option>
 	<option name="db-user">afishaspb</option>
 	<option name="db-password">afishaspb</option>
 	<option name="tomcat-dir">~/soft/tomcat</option>
