@@ -12,8 +12,9 @@ end
 Dir.mkdir("build") unless File.exist? "build"
 Dir.chdir("build") do
 	Dir.mkdir "db_struct" unless File.exist? "db_struct"
-	kaisa = XMLManager.connect(options["db-conn"], options["db-user"], options["db-password"]) do |xm|
-		Dir.chdir("db_struct") do
+	puts "Loadind database structure"
+	kaisa = Dir.chdir("db_struct") do
+		XMLManager.connect(options["db-conn"], options["db-user"], options["db-password"]) do |xm|
 			Kaisa.new(xm)
 		end
 	end
@@ -24,9 +25,10 @@ Dir.chdir("build") do
 		end
 	end
 	conf = REXML::Document.new("<?xml version='1.0'?><forms-config/>")
-	menu = REXML::Document.new("<?xml version='1.0'?><menu/>")
+	puts "Generate forms"
 	Dir.mkdir("forms") unless File.exist?("forms")
 	Dir.chdir("forms") do
+		menu = REXML::Document.new("<?xml version='1.0'?><menu/>")
 		kaisa.types.each do |ot|
 			conf_el = REXML::Element.new("form")
 			conf_el.add_attribute("name", "#{ot.system_name}_edit")
@@ -45,12 +47,16 @@ Dir.chdir("build") do
 				end
 			end
 		end
+		conf_el = REXML::Element.new("form")
+		conf_el.add_attribute("name", "menu")
+		conf_el.add_attribute("template", "forms/menu.xml")
+		conf.root.add(conf_el)
+		File.open("menu.xml", "w") do |f|
+			REXML::Formatters::Pretty.new(2).write(menu, f)
+		end
 	end
 	File.open("forms.xml", "w") do |f|
 		REXML::Formatters::Pretty.new(2).write(conf, f)
-	end
-	File.open("menu.xml", "w") do |f|
-		REXML::Formatters::Pretty.new(2).write(menu, f)
 	end
 end
 

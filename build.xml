@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<project name="KaisaIntranet" default="dist">
+	<target name="build">
+		<exec executable="jruby">
+			<arg value="build.rb"/>
+		</exec>
+	</target>
+	<target name="dist" depends="build">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/k3"/>
+		<copy file="src/index.html" todir="dist"/>
+		<copy file="build/resources.xml" todir="dist/k3"/>
+		<copy file="build/db_struct/language.xml" tofile="dist/k3/lang.xml"/>
+		<concat destfile="dist/k3/script.js">
+			<fileset dir="src/js">
+				<include name="*.js"/>
+				<include name="controls/*.js"/>
+			</fileset>
+		</concat>
+	</target>
+	<target name="clean">
+		<delete dir="build"/>
+		<delete dir="dist"/>
+	</target>
+</project>

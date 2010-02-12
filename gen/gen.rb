@@ -278,6 +278,18 @@ class Kaisa
 end
 
 class XMLManager
+	private
+	def get_connection
+		if @connection.nil?
+			puts "Connecting to Oracle"
+			Java::JavaClass.for_name("oracle.jdbc.driver.OracleDriver")
+			@connection = java.sql.DriverManager.getConnection(@conn_str, @user, @password)
+		else
+			@connection
+		end
+	end
+	
+	public
 	def XMLManager.connect(conn_str, user, password)
 		sm = XMLManager.new(conn_str, user, password)
 		begin
@@ -288,20 +300,19 @@ class XMLManager
 	end
 		
 	def initialize(conn_str, user, password)
+		@conn_str, @user, @password = conn_str, user, password
 		@dir = "#{Dir.pwd}"
-		Java::JavaClass.for_name("oracle.jdbc.driver.OracleDriver")
-		@connection = java.sql.DriverManager.getConnection(conn_str, user, password)
+		@connection = nil
 	end
 	
 	def close
-		@connection.close
+		@connection.close unless @connection.nil?
 	end
 	
 	def get_xml(clob_expr, file)
 		unless File.exist? file
 			begin
-				puts "update #{file}"
-				stmt = @connection.createStatement()
+				stmt = get_connection.createStatement()
 				set = stmt.executeQuery("SELECT #{clob_expr}.getclobval() as xml FROM dual")
 				if set.next
 					str_out = java.lang.StringBuffer.new
@@ -309,6 +320,7 @@ class XMLManager
 					while tmp=br.readLine() do
 						str_out.append(tmp)
 					end
+					puts "Update #{file}"
 					File.open("#{@dir}/#{file}", "w") do |f|
 						REXML::Formatters::Pretty.new(2).write(REXML::Document.new("<?xml version=\"1.0\"?>#{str_out.toString}"), f)
 					end
@@ -319,7 +331,7 @@ class XMLManager
 				stmt.close
 			end
 		end
-		File.open(file) do |f|
+		File.open("#{@dir}/#{file}") do |f|
 			REXML::Document.new(f.read)
 		end
 	end
@@ -342,9 +354,8 @@ class XMLManager
 	def languages
 		lang_file = "#{@dir}/language.xml"
 		unless File.exist? lang_file
-			puts "update: language.xml"
 			begin
-				lang_stmt = @connection.createStatement()
+				lang_stmt = get_connection.createStatement()
 				lang_set = lang_stmt.executeQuery("SELECT id, name, fdefault FROM languages")
 				lang_doc = REXML::Document.new("<?xml version='1.0'?><languageList/>")
 				while lang_set.next do
@@ -356,6 +367,7 @@ class XMLManager
 					lang_node.add_attribute("name", lang_set.getString("NAME"))
 					lang_doc.root.add(lang_node)
 				end
+				puts "update: language.xml"
 				File.open(lang_file, "w") do |f|
 					REXML::Formatters::Pretty.new(2).write(lang_doc, f)
 				end
