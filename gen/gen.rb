@@ -92,7 +92,7 @@ class Kaisa
 		end
 		
 		@types = REXML::XPath.match(xm.object_types(@languages.first.id), "objectTypeList/objectType").map do |nd|
-			ObjectType.new(nd)
+			ObjectType.new(nd).set_parent(self)
 		end
 		
 		@languages.each do |lang|
@@ -103,14 +103,23 @@ class Kaisa
 	end
 	
 	def type(id_or_name)
-		types.find{ |t| (t.systemName==id_or_name) || (t.id==id_or_name) }
+		types.find{ |t| (t.system_name==id_or_name) || (t.id==id_or_name) }
+	end
+	
+	module Parented
+		attr_accessor :parent
+		def set_parent(p)
+			@parent = p
+			self
+		end
 	end
 	
 	class Attribute
 		attr_reader :id, :name, :system_name, :data_type, :default_value, :connected_type, :connected_attribute, :readonly, :length, :required
+		include Parented
 		def initialize(node)
 			@id = node.attribute("id").value
-			@systemName = node.attribute("systemName").value
+			@system_name = node.attribute("systemName").value
 			@name = {}
 			@data_type = node.attribute("dataType").value.to_sym
 			@connected_type = node.attributes["idConnectedType"]
@@ -125,7 +134,22 @@ class Kaisa
 		end
 		
 		def resources
-			Resource::RString.new(@systemName, @name)
+			Resource::RString.new(@system_name, @name)
+		end
+		
+		def object_type
+			res = self.parent
+			until res.is_a? ObjectType do
+				res = res.parent
+			end
+			res
+		end
+		def kaisa
+			res = self.parent
+			until res.is_a? Kaisa do
+				res = res.parent
+			end
+			res
 		end
 		
 		alias :readonly? :readonly
@@ -133,26 +157,27 @@ class Kaisa
 	end
 	
 	class Block
-		attr_reader :id, :name, :systemName, :attributes, :groups
+		attr_reader :id, :name, :system_name, :attributes, :groups
+		include Parented
 		def initialize(node)
 			@id = node.attribute("id").value
-			@systemName = node.attribute("systemName").value
+			@system_name = node.attribute("systemName").value
 			@name = {}
 			@attributes = REXML::XPath.match(node, "attribute").map do |a|
-				Attribute.new(a)
+				Attribute.new(a).set_parent(self)
 			end
 			@groups = REXML::XPath.match(node, "group").map do |g|
-				Group.new(g)
+				Group.new(g).set_parent(self)
 			end
 		end
 		def attribute(name_or_id)
 			@attributes.find do |a|
-				a.name==name_or_id || a.id==name_or_id
+				a.system_name==name_or_id || a.id==name_or_id
 			end
 		end
 		def group(name_or_id)
 			@groups.find do |g|
-				g.name==name_or_id || g.id==name_or_id
+				g.system_name==name_or_id || g.id==name_or_id
 			end
 		end
 		def [](name_or_id)
@@ -160,28 +185,29 @@ class Kaisa
 		end
 		def update(node, lang)
 			@name[lang.id] = node.attribute("name").value
-			REXML::XPath.match(node, "block/attribute").each do |a|
+			REXML::XPath.match(node, "attribute").each do |a|
 				attribute(a.attribute("id").value).update(a, lang)
 			end
-			REXML::XPath.match(node, "block/group").each do |g|
+			REXML::XPath.match(node, "group").each do |g|
 				group(g.attribute("id").value).update(g, lang)
 			end
 		end
 		def resources
-			[Resource::RString.new("block_#{@systemName}", @name),
+			[Resource::RString.new("block_#{@system_name}", @name),
 			 @attributes.map { |a| a.resources },
 			 @groups.map { |g| g.resources }]
 		end
 	end
 	
 	class ObjectType
-		attr_reader :id, :systemName, :name, :blocks
+		attr_reader :id, :system_name, :name, :blocks
+		include Parented
 		def initialize(node)
 			@id = node.attribute("id").value
-			@systemName = node.attribute("systemName").value
+			@system_name = node.attribute("systemName").value
 			@name = {}
 			@blocks = REXML::XPath.match(node, "object/block").map do |b|
-				Block.new(b)
+				Block.new(b).set_parent(self)
 			end
 		end
 		def update(node, lang)
@@ -192,7 +218,7 @@ class Kaisa
 		end
 		def block(name_or_id)
 			@blocks.find do |b|
-				b.name==name_or_id || b.id==name_or_id
+				b.system_name==name_or_id || b.id==name_or_id
 			end
 		end
 		def attribute(n)
@@ -205,37 +231,48 @@ class Kaisa
 				r || b.group(n)
 			end
 		end
+		def attributes
+			@blocks.inject([]) do |r, b|
+				r.concat(b.attributes)
+			end
+		end
+		def groups
+			@blocks.inject([]) do |r, b|
+				r.concat(b.groups)
+			end
+		end
 		def [](n)
 			attribute(n) || group(n)
 		end
 		def resources
-			[Resource::RString.new("type_#{@systemName}", @name),
-			 Resource::RSet.new(@systemName, @blocks.map { |b| b.resources })]
+			[Resource::RString.new("type_#{@system_name}", @name),
+			 Resource::RSet.new(@system_name, @blocks.map { |b| b.resources })]
 		end
 	end
 	
 	class Group
-		attr_reader :id, :name, :attributes
+		attr_reader :id, :name, :system_name, :attributes
+		include Parented
 		def initialize(node)
 			@name = {}
-			@systemName = node.attribute("systemName").value
+			@system_name = node.attribute("systemName").value
 			@id = node.attribute("id").value
-			@attributes = REXML::XPath.match(node, "group/groupRecord/attribute").map do |a|
-				Attribute.new(a)
+			@attributes = REXML::XPath.match(node, "groupRecord/attribute").map do |a|
+				Attribute.new(a).set_parent(self)
 			end
 		end
 		def attribute(n)
-			@attributes.find { |a| a.name==n || a.id==n }
+			@attributes.find { |a| a.system_name==n || a.id==n }
 		end
 		def update(node, lang)
 			@name[lang.id] = node.attribute("name").value
-			REXML::XPath.match(node, "group/groupRecord/attribute").each do |nd|
+			REXML::XPath.match(node, "groupRecord/attribute").each do |nd|
 				attribute(nd.attribute("id").value).update(nd, lang)
 			end
 		end
 		def resources
-			[Resource::RString.new("group_#{@name}", @name),
-			 Resource::RSet.new(@systemName, @attributes.map{ |r| r.resources })]
+			[Resource::RString.new("group_#{@system_name}", @name),
+			 Resource::RSet.new(@system_name, @attributes.map{ |r| r.resources })]
 		end
 	end
 end
