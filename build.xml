@@ -21,6 +21,11 @@
 			</fileset>
 		</concat>
 		<unzip src="src/lib/themes.jar" dest="dist/k3/themes"/>
+		<copy todir="dist/k3/forms">
+			<fileset dir="build/forms"/>
+		</copy>
+		<copy file="build/menu.xml" todir="dist/k3/forms"/>
+		<copy file="build/forms.xml" todir="dist/k3"/>
 	</target>
 	<target name="build" depends="generate,copy"/>
 	<target name="clean">

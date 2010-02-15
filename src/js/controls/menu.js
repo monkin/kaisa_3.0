@@ -3,9 +3,9 @@
 $control.register({
 	name: "menu",
 	css: [".c-menu { width: 100%; overflow: hidden; }",
-		".c-menu-item { margin: 0.6em 0 0.6em 0.6em; position: relative; left: 1px; padding: 0.1em; padding: 0.1em 0.6em 0.2em 0.6em; white-space: nowrap; cursor: pointer; }",
+		".c-menu-item { border-right-width: 0 !important; margin: 0.6em 0 0.6em 0.6em; padding: 0.1em; padding: 0.1em 0.6em 0.2em 0.6em; white-space: nowrap; cursor: pointer; }",
 		".c-menu-cell { height: 100%; }",
-		".c-menu-item-active { border-right-width: 0 !important; cursor: default; }",
+		".c-menu-item-active { position: relative; left: 1px; cursor: default; }",
 		".c-menu-height { height: 100%; }",
 		".c-menu-content { border-width: 0 !important; padding: 0.6em; }",
 		".c-menu-content-cell { width: 100%; vertical-align: top; }",
@@ -29,8 +29,17 @@ $control.register({
 			items.foreach(updateItem)
 		}
 		function selectItem(i) {
-			selectedItem = i
-			updateItemList(updateItem)
+			$log("select")
+			$log(i)
+			if(selectedItem!=i) {
+				$log("good")
+				selectedItem = i
+				$form(i.form, function(f) {
+					content.children().remove()
+					content.append(f.node())
+				})
+				updateItemList(updateItem)
+			}
 		}
 		var res = {
 			node: function() {

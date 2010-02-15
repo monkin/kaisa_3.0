@@ -12,25 +12,17 @@
 		<script type="text/javascript" src="k3/script.js"></script>
 		<script type="text/javascript">
 			function may_test() {
-				var menu = $control("menu")
-				menu.addMenuItem({
-					label: "kaisa.type_PEPERTOIRECINEM",
-					form: "PEPERTOIRECINEM_edit"
+				$form("menu", function(f) {
+					$("body").append(f.node())
 				})
-				menu.addMenuItem({
-					label: "kaisa.type_PLAYGENRE",
-					form: "PLAYGENRE_edit"
-				})
-				menu.addMenuItem({
-					label: "kaisa.type_ORGTYPES",
-					form: "ORGTYPES_edit"
-				})
-				$("body").append(menu.node())
+				
 			}
 			$(function() {
 				$resources.load(function() {
+					$form.init(function() {
 						may_test()
 					})
+				})
 			})
 		</script>
 		<div id="t"></div>

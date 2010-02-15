@@ -2,6 +2,7 @@
 
 $control.register({
 	name: "tab-control",
+	css: ".ui-tabs-panel { padding: 0.3em !important; }",
 	create: function() {
 		var tabs = []
 		var node = $('<div id="tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all"><ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all ui-sortable"></ul></div>')
@@ -28,7 +29,7 @@ $control.register({
 			addTab: function(t) {
 				var tab = {
 					label: t.label,
-					control: $control.get(t.value)
+					control: $control.get(t.control)
 				}
 				function activate(e) {
 					setActiveTab(tab)
