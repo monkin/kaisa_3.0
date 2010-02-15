@@ -115,7 +115,7 @@ class Kaisa
 	end
 	
 	class Attribute
-		attr_reader :id, :name, :system_name, :data_type, :default_value, :connected_type, :connected_attribute, :readonly, :length, :required
+		attr_reader :id, :name, :system_name, :data_type, :default_value, :connected_type, :connected_attribute, :readonly, :length, :required, :privileges
 		include Parented
 		def initialize(node)
 			@id = node.attribute("id").value
@@ -128,9 +128,16 @@ class Kaisa
 			@required = node.attributes["fRequired"]=="1"
 			@default_value = node.attributes["defaultValue"]
 			@length = node.attributes["length"]
+			@privileges = []
 		end
 		def update(node, lang)
 			@name[lang.id] = node.attributes["name"]
+		end
+		
+		def update_privileges(nd)
+			@privileges = REXML::XPath.match(nd, "privilege").map do |p|
+				p.attributes["name"].to_sym
+			end
 		end
 		
 		def resources
@@ -208,6 +215,10 @@ class Kaisa
 			@name = {}
 			@blocks = REXML::XPath.match(node, "object/block").map do |b|
 				Block.new(b).set_parent(self)
+			end
+			REXML::XPath.match(node, "object/privileges/attribute").each do |attr|
+				attr_id = attr.attributes["id"]
+				(attribute(attr_id) || groups.inject(nil) { |r, g| r || g.attribute(attr_id) }).update_privileges(attr)
 			end
 		end
 		def update(node, lang)

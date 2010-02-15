@@ -1,23 +1,28 @@
 <?xml version="1.0"?>
-<project name="KaisaIntranet" default="dist">
-	<target name="build">
+<project name="KaisaIntranet" default="build">
+	<target name="generate">
 		<exec executable="jruby">
 			<arg value="build.rb"/>
 		</exec>
 	</target>
-	<target name="dist" depends="build">
+	<target name="copy">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/k3"/>
 		<copy file="src/index.html" todir="dist"/>
 		<copy file="build/resources.xml" todir="dist/k3"/>
 		<copy file="build/db_struct/language.xml" tofile="dist/k3/lang.xml"/>
+		<copy file="src/lib/jquery.js" tofile="dist/k3/jquery.js"/>
+		<copy file="src/lib/jquery-ui.js" tofile="dist/k3/jquery-ui.js"/>
+		<copy file="src/lib/jquery.cssRule.js" tofile="dist/k3/jquery.cssRule.js"/>
 		<concat destfile="dist/k3/script.js">
 			<fileset dir="src/js">
 				<include name="*.js"/>
 				<include name="controls/*.js"/>
 			</fileset>
 		</concat>
+		<unzip src="src/lib/themes.jar" dest="dist/k3/themes"/>
 	</target>
+	<target name="build" depends="generate,copy"/>
 	<target name="clean">
 		<delete dir="build"/>
 		<delete dir="dist"/>

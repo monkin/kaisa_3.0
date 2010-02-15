@@ -62,7 +62,6 @@ module Forms
 			res = REXML::Document.new("<?xml version='1.0'?><form/>")
 			if @object_type.blocks.length>1
 				tabs = REXML::Element.new("tab-control")
-				tabs.add_attribute("result-mode", "merged")
 				@object_type.blocks.each do |b|
 					tab = REXML::Element.new("tab")
 					tab.add_attribute("label", "kaisa.#{b.parent.system_name}.block_#{b.system_name}")

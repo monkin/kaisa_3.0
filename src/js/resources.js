@@ -5,13 +5,16 @@ $language = {
 	current: null
 }
 
-$resource = function(path) {
-	
+$resources = function(path) {
+	var res = path.split(/\./).accumulate($resources.data, function(r, v) {
+		return r ? r[v] : null
+	})
+	return (res ? res[$language.current.id] : path) || path
 }
 
-$resource.data = {}
+$resources.data = {}
 
-$resource.load = function(onload) {
+$resources.load = function(onload) {
 	$.ajax({
 		url: "k3/lang.xml",
 		dataType: "xml",
@@ -42,8 +45,8 @@ $resource.load = function(onload) {
 						res[$(nd).attr("name")] =  $.makeArray($(nd).children().filter("string")).accumulate({}, processString).extend($.makeArray($(nd).children().filter("string-set")).accumulate({}, processStringSet))
 						return res
 					}
-					$log($("resources > string-set", d2))
-					$resource.data = $.makeArray($("resources > string", d2)).accumulate({}, processString).extend($.makeArray($("resources > string-set", d2)).accumulate({}, processStringSet))
+					$resources.data = $.makeArray($("resources > string", d2)).accumulate({}, processString).extend($.makeArray($("resources > string-set", d2)).accumulate({}, processStringSet))
+					onload()
 				}
 			})
 		}
