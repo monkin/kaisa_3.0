@@ -26,11 +26,9 @@ module Forms
 						c.attributes.any? do |a|
 							!a.readonly? && a.data_type!=:REFERENCE
 						end
-						false
 					end
 				end).map do |c|
 					field = REXML::Element.new("field")
-					#field.add_attribute("name", c.system_name)
 					if c.is_a? Kaisa::Attribute
 						field.add_attribute("label", label_id[c])
 						#field.add_attribute("required", c.required ? "yes" : "no")
@@ -57,6 +55,7 @@ module Forms
 # # 						arr_el.add(ch_el)
 # # 						field.add(arr_el)
 						ch_el = form[c.attributes] #!!!
+						field.add(ch_el)
 					end
 					f.add(field)
 				end

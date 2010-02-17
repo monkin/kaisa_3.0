@@ -2,7 +2,7 @@
 
 $control.register({
 	name: "form",
-	css: [".c-form { width: 100%; border-color: transparent;}",
+	css: [".c-form { width: 100%; border-color: transparent; }",
 		".c-form-body { width: 100%; }",
 		".c-form-row { width: 100%; }",
 		".c-form-label { width: 30%; padding: 0.2em; }",
