@@ -2,6 +2,7 @@
 require "lib/ojdbc6.jar"
 require "rexml/document"
 require "rexml/formatters/pretty"
+require "gen/json.rb"
 
 module Resource
 	class RDocument
@@ -285,6 +286,32 @@ class Kaisa
 			[Resource::RString.new("group_#{@system_name}", @name),
 			 Resource::RSet.new(@system_name, @attributes.map{ |r| r.resources })]
 		end
+	end
+	
+	def to_json
+		attr_to_js = lambda do |attr|
+			res = {
+				"id" => attr.id,
+				"name" => attr.system_name,
+				"type" => attr.data_type,
+				"readonly" => attr.readonly,
+				"required" => attr.required,
+				"privileges" => attr.privileges
+			}
+			res["connected_type"] = attr.connected_type if attr.connected_type
+			res["connected_attribute"] = attr.connected_attribute if attr.connected_attribute
+			return res
+		end
+		types.map { |t| { 
+				"id" => t.id,
+				"name" => t.system_name,
+				"attributes" => t.attributes.map { |a| attr_to_js[a] },
+				"groups" => t.groups.map { |g| {
+						"id" => g.id,
+						"name" => g.system_name,
+						"attributes" => g.attributes.map { |a| attr_to_js[a] }
+					} }
+			} }.to_json
 	end
 end
 

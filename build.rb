@@ -24,6 +24,14 @@ Dir.chdir("build") do
 			REXML::Formatters::Pretty.new(2).write(Resource::RDocument.new(kaisa.resources).to_xml, f)
 		end
 	end
+	
+	unless File.exist? "db.json"
+		puts "Serializing db structure"
+		File.open("db.json", "w") do |f|
+			f.write(kaisa.to_json)
+		end
+	end
+	
 	conf = REXML::Document.new("<?xml version='1.0'?><forms-config/>")
 	puts "Generate forms"
 	Dir.mkdir("forms") unless File.exist?("forms")
