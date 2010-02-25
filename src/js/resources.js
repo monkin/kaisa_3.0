@@ -14,7 +14,23 @@ $resources = function(path) {
 
 $resources.data = {}
 
-$resources.load = function(onload) {
+$resources.appendXml = function(nd) {
+	function processString(res, nd) {
+		v = {}
+		res[$(nd).attr("name")] = v
+		$language.list.foreach(function(l) {
+			v[l.id] = $(nd).attr("value" + l.id)
+		})
+		return res
+	}
+	function processStringSet(res, nd) {
+		res[$(nd).attr("name")] =  $.makeArray($(nd).children().filter("string")).accumulate({}, processString).extend($.makeArray($(nd).children().filter("string-set")).accumulate({}, processStringSet))
+		return res
+	}
+	$resources.data = $resources.data.extend($.makeArray($("resources > string", nd)).accumulate({}, processString).extend($.makeArray($("resources > string-set", nd)).accumulate({}, processStringSet)))
+}
+
+$resources.load = function(url, onload) {
 	$.ajax({
 		url: "k3/lang.xml",
 		dataType: "xml",
@@ -30,23 +46,14 @@ $resources.load = function(onload) {
 				return res
 			}))
 			$.ajax({
-				url: "k3/resources.xml",
+				url: url,
 				dataType: "xml",
 				success: function(d2) {
-					function processString(res, nd) {
-						v = {}
-						res[$(nd).attr("name")] = v
-						$language.list.foreach(function(l) {
-							v[l.id] = $(nd).attr("value" + l.id)
-						})
-						return res
-					}
-					function processStringSet(res, nd) {
-						res[$(nd).attr("name")] =  $.makeArray($(nd).children().filter("string")).accumulate({}, processString).extend($.makeArray($(nd).children().filter("string-set")).accumulate({}, processStringSet))
-						return res
-					}
-					$resources.data = $.makeArray($("resources > string", d2)).accumulate({}, processString).extend($.makeArray($("resources > string-set", d2)).accumulate({}, processStringSet))
-					onload()
+					$resources.appendXml(d2)
+					onload(true)
+				},
+				error: function() {
+					onload(false)
 				}
 			})
 		}

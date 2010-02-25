@@ -63,6 +63,12 @@ Dir.chdir("build") do
 			REXML::Formatters::Pretty.new(2).write(menu, f)
 		end
 	end
+	Dir.new("../src/forms").to_a.grep(/\.xml$/).each do |f|
+		conf_el = REXML::Element.new("form")
+		conf_el.add_attribute("name", "#{f.gsub(/\.xml$/, "")}")
+		conf_el.add_attribute("template", "forms/local/#{f}")
+		conf.root.add(conf_el)
+	end
 	File.open("forms.xml", "w") do |f|
 		REXML::Formatters::Pretty.new(2).write(conf, f)
 	end

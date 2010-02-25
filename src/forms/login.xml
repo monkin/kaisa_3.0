@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<attributes id="login" names="ok;kaisa">
+	<resources>
+		<string-set name="loginForm">
+			<string name="title" value2="Login" value1="Ввведите имя и пароль"/>
+			<string name="loginField" value2="Login" value1="Логин"/>
+			<string name="passwordField" value2="Password" value1="Пароль"/>
+			<string name="loginBtn" value2="Login" value1="Войти"/>
+		</string-set>
+	</resources>
+	<!--<window title="loginForm.title">-->
+		<attributes id="f" names="login;password">
+			<vbox>
+				<form>
+					<field label="loginForm.loginField">
+						<string id="tmp" value="#{f.login}"/>
+					</field>
+					<field label="loginForm.passwordField">
+						<password value="#{f.password}" password="yes"/>
+					</field>
+				</form>
+				<button-set>
+					<button label="loginForm.loginBtn">
+						login.getKaisa().login(f.getLogin(), f.getPassword(), function(r) {
+							login.setOk(r)
+						})
+					</button>
+				</button-set>
+			</vbox>
+		</attributes>
+	<!--</window>-->
+</attributes>

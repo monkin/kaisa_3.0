@@ -13,6 +13,8 @@ $form = function(name, fn) {
 				dataType: "xml",
 				success: function(nd) {
 					$form.xmlCache[name] = nd
+					$resources.appendXml(nd)
+					$("resources", nd).remove()
 					fn(processNode(nd.firstChild))
 				}
 			})

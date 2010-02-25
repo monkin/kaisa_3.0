@@ -12,17 +12,18 @@
 		<script type="text/javascript" src="k3/script.js"></script>
 		<script type="text/javascript">
 			function may_test() {
-				/*$form("menu", function(f) {
+				$form("login", function(f) {
 					$("body").append(f.node())
-				})*/
-				var f1 = $control("string")
+					//f.setVisible("true")
+				})
+				/*var f1 = $control("string")
 				var f2 = $control("string")
 				f2.property("value").bind(f1.property("value"), "length")
 				$("body").append(f1.node())
-				$("body").append(f2.node())
+				$("body").append(f2.node())*/
 			}
 			$(function() {
-				$resources.load(function() {
+				$resources.load("k3/resources.xml", function() {
 					$form.init(function() {
 						may_test()
 					})

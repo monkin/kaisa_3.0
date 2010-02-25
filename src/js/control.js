@@ -2,6 +2,12 @@
 $control = function(nm) {
 	var bindings = {}
 	var res = $control.classes[nm].create()
+	if(!res.remove) {
+		res.remove = function() {
+				res.node().remove()
+				res.unbindAll()
+			}
+	}
 	var props = {}
 	res.unbindAll = function() {
 		for(var i in props) {
@@ -76,7 +82,7 @@ $control = function(nm) {
 						var v = prop.get()
 						var v2 = v
 						for(var i=0; i<(path.length-1); i++)
-							v2 = v2 ? v2[path[i]] : undefined
+							v2 = (v2 && v2[path[i]]!=undefined && v2[path[i]]!=null) ? v2[path[i]] : (v2[path[i]] = {})
 						if(v2) {
 							v2[path.last()] = val
 							prop.set(v)
@@ -134,9 +140,8 @@ $control.register = function(c) {
 	$control.classes[c.name] = c
 }
 
-$control.processName = 
-
-$control.fromDom = function(node) {
+$control.fromDom = function(node/*, context*/) {
+	var context = {}.extend(arguments.length>1 ? arguments[1] : {})
 	var res = null
 	function processName(nm) {
 		return nm.toLowerCase().split("-").map(function(v) {
@@ -144,14 +149,43 @@ $control.fromDom = function(node) {
 		}).join("")
 	}
 	var c_class = $control.classes[node.nodeName]
-	var res = c_class.create()
+	var res = $control(node.nodeName)
+	if(node.getAttribute("id"))
+		context[node.getAttribute("id")] = res
 	var attrs = node.attributes
-	for(var i=0; i<attrs.length; i++)
-		res["set" + processName(attrs[i].name)](attrs[i].value)
-	for(var i=node.firstChild; i; i=i.nextSibling)
+	for(var i=0; i<attrs.length; i++) {
+		if(attrs[i].name!="id") {
+			if(/^#\{/.test(attrs[i].value) && /\}$/.test(attrs[i].value)) {
+				path = attrs[i].value.replace("#{", "").replace("}", "").split(/\./)
+				$log("bind")
+				$log(context)
+				$log(path[0])
+				if(context[path[0]] && context[path[0]].property) {
+					$log("bind!!!")
+					if(path.length>2) {
+						var p = $range(2, path.length).accumulate(null, function(r, i) {
+								return (r ? r+"." : "") + path[i]
+							})
+						res.property(attrs[i].name).bind(context[path[0]].property(path[1]), p)
+					} else
+						res.property(attrs[i].name).bind(context[path[0]].property(path[1]))
+				}
+			} else {
+				setter = "set" + processName(attrs[i].name)
+				if(res[setter] && (typeof res[setter] == "function"))
+					res[setter](attrs[i].value)
+			}
+		}
+	}
+	for(var i=node.firstChild; i; i=i.nextSibling) {
 		if(i.nodeType==1) {
 			if(c_class.container) {
-				res.add($control.from_dom(i))
+				res.add(function() {
+					var c = $control.fromDom(i, context)
+					if(i.getAttribute("id"))
+						context[i.getAttribute("id")] = c
+					return c
+				})
 			} else {
 				var nm = processName(i.nodeName)
 				var fn = res["set" + nm] || res["add" + nm]
@@ -163,7 +197,12 @@ $control.fromDom = function(node) {
 					for(var j=i.firstChild; j; j=j.nextSibling)
 						if(j.nodeType==1) {
 							val.control = (function(cNode) {
-									return function() { return $control.fromDom(cNode); }
+									return function() {
+											var r = $control.fromDom(cNode, context)
+											if(cNode.getAttribute("id"))
+												context[cNode.getAttribute("id")] = r
+											return r
+										}
 								})(j)
 							break
 						}
@@ -176,5 +215,6 @@ $control.fromDom = function(node) {
 				}
 			}
 		}
+	}
 	return res
 }

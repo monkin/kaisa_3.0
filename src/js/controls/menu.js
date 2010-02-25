@@ -28,6 +28,7 @@ $control.register({
 		function updateItemList() {
 			items.foreach(updateItem)
 		}
+		var curr = null
 		function selectItem(i) {
 			$log("select")
 			$log(i)
@@ -35,7 +36,9 @@ $control.register({
 				$log("good")
 				selectedItem = i
 				$form(i.form, function(f) {
-					content.children().remove()
+					if(curr)
+						curr.remove()
+					curr = f
 					content.append(f.node())
 				})
 				updateItemList(updateItem)

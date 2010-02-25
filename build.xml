@@ -18,18 +18,28 @@
 			<fileset dir="src/js">
 				<include name="*.js"/>
 				<include name="controls/*.js"/>
+				<include name="controls/*/*.js"/>
 			</fileset>
 		</concat>
 		<unzip src="src/lib/themes.jar" dest="dist/k3/themes"/>
 		<copy todir="dist/k3/forms">
 			<fileset dir="build/forms"/>
 		</copy>
+		<copy todir="dist/k3/forms/local">
+			<fileset dir="src/forms"/>
+		</copy>
 		<copy file="build/menu.xml" todir="dist/k3/forms"/>
 		<copy file="build/forms.xml" todir="dist/k3"/>
+		<copy file="build/db.json" todir="dist/k3"/>
 	</target>
 	<target name="build" depends="generate,copy"/>
 	<target name="clean">
 		<delete dir="build"/>
 		<delete dir="dist"/>
+	</target>
+	<target name="deploy">
+		<copy todir="/home/andrey/soft/tomcat/webapps/intranet">
+			<fileset dir="dist"/>
+		</copy>
 	</target>
 </project>
