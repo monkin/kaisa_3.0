@@ -144,7 +144,7 @@ $control.fromDom = function(node/*, context*/) {
 	var context = {}.extend(arguments.length>1 ? arguments[1] : {})
 	var res = null
 	function processName(nm) {
-		return nm.toLowerCase().split("-").map(function(v) {
+		return nm.toLowerCase().split("-")._map(function(v) {
 			return v.substring(0, 1).toUpperCase() + v.substring(1, v.length)
 		}).join("")
 	}

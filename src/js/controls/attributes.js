@@ -10,7 +10,7 @@ $control.register({
 				return child && child.node()
 			},
 			setNames: function(names) {
-				names.split(";").foreach(function(nm) {
+				names.split(";")._each(function(nm) {
 					var val = null
 					nm = nm.substring(0, 1).toUpperCase() + nm.substring(1, nm.length)
 					res["change" + nm] = $handler()

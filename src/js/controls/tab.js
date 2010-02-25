@@ -18,7 +18,7 @@ $control.register({
 		}
 		function setActiveTab(t) {
 			activeTab = t
-			tabs.foreach(function(t) {
+			tabs._each(function(t) {
 				updateClasses(t)
 			})
 		}

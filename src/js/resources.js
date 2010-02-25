@@ -18,7 +18,7 @@ $resources.appendXml = function(nd) {
 	function processString(res, nd) {
 		v = {}
 		res[$(nd).attr("name")] = v
-		$language.list.foreach(function(l) {
+		$language.list._each(function(l) {
 			v[l.id] = $(nd).attr("value" + l.id)
 		})
 		return res

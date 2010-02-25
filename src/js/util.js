@@ -1,5 +1,5 @@
 
-Array.prototype.map = function(fn) {
+Array.prototype._map = function(fn) {
 	var res = new Array(this.length);
 	switch(fn.length) {
 	case 1:
@@ -17,7 +17,7 @@ Array.prototype.map = function(fn) {
 	}
 }
 
-Array.prototype.foreach = function(fn) {
+Array.prototype._each = function(fn) {
 	switch(fn.length) {
 	case 1:
 		for(var i=0; i<this.length; i++)
@@ -35,7 +35,7 @@ Array.prototype.foreach = function(fn) {
 	return this;
 }
 
-Array.prototype.filter = function(fn) {
+Array.prototype._filter = function(fn) {
 	var res = new Array();
 	switch(fn.length) {
 	case 1:
@@ -101,7 +101,7 @@ $uid.cnt = 0;
 Array.prototype.group = function(fn) {
 	var res = [];
 	if(fn.length==2) {
-		this.foreach(function(i, el) {
+		this._each(function(i, el) {
 			var group = fn(i, el);
 			if((typeof group)=='number' || (typeof group)=='string') {
 				if(res[group]==undefined)
@@ -111,7 +111,7 @@ Array.prototype.group = function(fn) {
 			}
 		});
 	} else {
-		this.foreach(function(el) {
+		this._each(function(el) {
 			var group = fn(el);
 			if((typeof group)=='number' || (typeof group)=='string') {
 				if(res[group]==undefined)
@@ -146,7 +146,7 @@ Array.prototype.indexOf = function(p) {
 }
 
 Array.prototype.removeEmpty = function() {
-	return this.filter(function(v) {
+	return this._filter(function(v) {
 		return true;
 	});
 }
@@ -235,18 +235,18 @@ function $handler() {
 	var res = Object.extend(function() {
 			var args = Array.fromObject(arguments);
 			var obj = this;
-			arguments.callee.handlers_once.foreach(function(v) {
+			arguments.callee.handlers_once._each(function(v) {
 				v.apply(obj, args)
 			})
 			arguments.callee.handlers_once = []
-			arguments.callee.handlers.foreach(function(v) {
+			arguments.callee.handlers._each(function(v) {
 				v.apply(obj, args)
 			})
 		}, {
 			handlers: [],
 			handlers_once: [],
 			once: function(fn) {
-				this.handlers_once = this.handlers_once.filter(function(v) {
+				this.handlers_once = this.handlers_once._filter(function(v) {
 					return v!=fn
 				})
 				this.handlers_once.push(fn)
@@ -258,7 +258,7 @@ function $handler() {
 				return res
 			},
 			remove: function(fn) {
-				this.handlers = this.handlers.filter(function(v) {
+				this.handlers = this.handlers._filter(function(v) {
 					return v!=fn
 				})
 				return res

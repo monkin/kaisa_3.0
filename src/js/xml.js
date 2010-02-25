@@ -19,15 +19,15 @@ $xml.element = function(name) {
 		if(!arg)
 			return;
 		if(arg instanceof Array)
-			arg.foreach(processArgument);
+			arg._each(processArgument);
 		else if(arg.type=="attribute")
 			res.attributes.push(arg);
 		else if(arg.type!=undefined)
 			res.children.push(arg);
 	}
-	Array.fromObject(arguments).filter(function(i, v) {
+	Array.fromObject(arguments)._filter(function(i, v) {
 		return i!=0 && (v.type || (v instanceof Array))
-	}).map(processArgument)
+	})._map(processArgument)
 	return res;
 }
 

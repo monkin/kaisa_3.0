@@ -26,7 +26,7 @@ $control.register({
 				i.menuNode.removeClass("ui-state-active").addClass("ui-state-default").removeClass("c-menu-item-active")
 		}
 		function updateItemList() {
-			items.foreach(updateItem)
+			items._each(updateItem)
 		}
 		var curr = null
 		function selectItem(i) {

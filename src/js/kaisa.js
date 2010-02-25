@@ -3,7 +3,7 @@
 function $kaisa(struct) {
 	type_by_name = {}
 	type_by_id = {}
-	struct.foreach(function(ot) {
+	struct._each(function(ot) {
 		type_by_name[ot.name] = ot
 		type_by_id[ot.id] = ot
 	})
