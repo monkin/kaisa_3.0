@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<attributes id="login" names="ok;kaisa">
+<attributes id="login" names="ok;kaisa;visible">
 	<resources>
 		<string-set name="loginForm">
 			<string name="title" value2="Login" value1="Ввведите имя и пароль"/>
@@ -8,8 +8,9 @@
 			<string name="loginBtn" value2="Login" value1="Войти"/>
 		</string-set>
 	</resources>
-	<!--<window title="loginForm.title">-->
-		<attributes id="f" names="login;password">
+	<attributes id="f" names="login;password">
+	<!-- loginForm.title -->
+		<window title="#{f.login}" visible="#{login.visible}">
 			<vbox>
 				<form>
 					<field label="loginForm.loginField">
@@ -27,6 +28,6 @@
 					</button>
 				</button-set>
 			</vbox>
-		</attributes>
-	<!--</window>-->
+		</window>
+	</attributes>
 </attributes>

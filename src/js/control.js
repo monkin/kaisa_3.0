@@ -29,8 +29,8 @@ $control = function(nm) {
 				else {
 					try {
 						inChange = true
-						p.set(bindedTo.get())
-						p.change()
+						if(p.set)
+							p.set(bindedTo.get())
 					} finally {
 						inChange = false
 					}
@@ -157,11 +157,7 @@ $control.fromDom = function(node/*, context*/) {
 		if(attrs[i].name!="id") {
 			if(/^#\{/.test(attrs[i].value) && /\}$/.test(attrs[i].value)) {
 				path = attrs[i].value.replace("#{", "").replace("}", "").split(/\./)
-				$log("bind")
-				$log(context)
-				$log(path[0])
 				if(context[path[0]] && context[path[0]].property) {
-					$log("bind!!!")
 					if(path.length>2) {
 						var p = $range(2, path.length).accumulate(null, function(r, i) {
 								return (r ? r+"." : "") + path[i]

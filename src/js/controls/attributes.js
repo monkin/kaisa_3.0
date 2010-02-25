@@ -19,7 +19,8 @@ $control.register({
 					}
 					res["set" + nm] = function(v) {
 						val = v
-						res["change" + nm]
+						res["change" + nm]()
+						return res
 					}
 				})
 			},

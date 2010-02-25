@@ -14,6 +14,7 @@ $control.register({
 			},
 			setValue: function(v) {
 				node.val(v)
+				res.changeValue()
 				return res
 			},
 			getValue: function() {
@@ -39,6 +40,7 @@ $control.register({
 			},
 			setValue: function(v) {
 				node.val(v)
+				res.changeValue()
 				return res
 			},
 			getValue: function() {
