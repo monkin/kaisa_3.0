@@ -2,6 +2,7 @@
 <attributes id="login" names="ok;visible">
 	<resources>
 		<string-set name="loginForm">
+			<string name="error" value2="Invalid user name or password" value1="Неправильный логин или пароль"/>
 			<string name="title" value2="Login" value1="Ввведите имя и пароль"/>
 			<string name="loginField" value2="Login" value1="Логин"/>
 			<string name="passwordField" value2="Password" value1="Пароль"/>
@@ -11,6 +12,7 @@
 	<attributes id="f" names="login;password">
 		<window title="loginForm.title" visible="#{login.visible}">
 			<vbox>
+				<error-message id="error" visible="no" message="loginForm.error"/>
 				<form>
 					<field label="loginForm.loginField">
 						<string id="tmp" value="#{f.login}"/>
@@ -23,6 +25,7 @@
 					<button label="loginForm.loginBtn">
 						$kaisa.login(f.getLogin(), f.getPassword(), function(r) {
 							login.setOk(r)
+							error.setVisible(!r)
 							if(r)
 								login.setVisible(false)
 						})
