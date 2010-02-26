@@ -2,11 +2,11 @@
 
 $control.register({
 	name: "form",
-	css: [".c-form { width: 100%; border-color: transparent; }",
-		".c-form-body { width: 100%; }",
-		".c-form-row { width: 100%; }",
-		".c-form-label { width: 30%; padding: 0.2em; }",
-		".c-form-control { width: 70%; padding: 0.2em; }"].join(";\n"),
+	css: [".c-form { display: inline-table; border-color: transparent; }",
+		/*".c-form-body { width: 100%; }",
+		".c-form-row { width: 100%; }",*/
+		".c-form-label { padding: 0.2em 2em 0.2em 0.2em; }",
+		".c-form-control { padding: 0.2em; }"].join(";\n"),
 	create: function() {
 		var node = $("<table class=\"ui-widget c-form ui-widget-content ui-corner-all \"><tbody class=\"c-form-body\"></tbody></table>")
 		var tbody = $("tbody", node)

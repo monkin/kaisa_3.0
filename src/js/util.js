@@ -80,17 +80,7 @@ Array.fromObject = function(obj) {
 	return res;
 }
 
-Object.prototype.extend = function(obj) {
-	for(var i in obj)
-		this[i] = obj[i];
-	return this;
-}
 
-Object.extend = function(o1, o2) {
-	for(var i in o2)
-		o1[i] = o2[i];
-	return o1;
-}
 
 var $uid = function() {
 	return ($uid.cnt++).toString() + "-" + Math.random() + "-" + (new Date()).getTime();
@@ -232,7 +222,7 @@ Array.prototype.timerMap = function(fn, cnt) {
 
 
 function $handler() {
-	var res = Object.extend(function() {
+	var res = $.extend(function() {
 			var args = Array.fromObject(arguments);
 			var obj = this;
 			arguments.callee.handlers_once._each(function(v) {

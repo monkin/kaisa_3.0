@@ -24,10 +24,13 @@ $resources.appendXml = function(nd) {
 		return res
 	}
 	function processStringSet(res, nd) {
-		res[$(nd).attr("name")] =  $.makeArray($(nd).children().filter("string")).accumulate({}, processString).extend($.makeArray($(nd).children().filter("string-set")).accumulate({}, processStringSet))
+		res[$(nd).attr("name")] =  $.extend($.makeArray($(nd).children().filter("string")).accumulate({}, processString),
+											$.makeArray($(nd).children().filter("string-set")).accumulate({}, processStringSet))
 		return res
 	}
-	$resources.data = $resources.data.extend($.makeArray($("resources > string", nd)).accumulate({}, processString).extend($.makeArray($("resources > string-set", nd)).accumulate({}, processStringSet)))
+	$resources.data = $.extend($resources.data,
+		$.makeArray($("resources > string", nd)).accumulate({}, processString),
+		$.makeArray($("resources > string-set", nd)).accumulate({}, processStringSet))
 }
 
 $resources.load = function(url, onload) {

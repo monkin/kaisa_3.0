@@ -1,6 +1,10 @@
 
 
-$form = function(name, fn) {
+$form = function(name/*, fn*/) {
+	var res = null
+	var fn = arguments.length==2 ? arguments[1] : function(r) {
+			res = r
+		}
 	if($form.mapping[name]) {
 		function processNode(nd) {
 			return $control.fromDom(nd)
@@ -9,6 +13,7 @@ $form = function(name, fn) {
 			fn(processNode($form.xmlCache[name].firstChild))
 		else {
 			$.ajax({
+				async: arguments.length==2,
 				url: "k3/" + $form.mapping[name],
 				dataType: "xml",
 				success: function(nd) {
@@ -21,6 +26,7 @@ $form = function(name, fn) {
 		}
 	} else
 		fn(null)
+	return res
 }
 
 $form.xmlCache = {}

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<attributes id="login" names="ok;kaisa;visible">
+<attributes id="login" names="ok;visible">
 	<resources>
 		<string-set name="loginForm">
 			<string name="title" value2="Login" value1="Ввведите имя и пароль"/>
@@ -9,8 +9,7 @@
 		</string-set>
 	</resources>
 	<attributes id="f" names="login;password">
-	<!-- loginForm.title -->
-		<window title="#{f.login}" visible="#{login.visible}">
+		<window title="loginForm.title" visible="#{login.visible}">
 			<vbox>
 				<form>
 					<field label="loginForm.loginField">
@@ -22,8 +21,10 @@
 				</form>
 				<button-set>
 					<button label="loginForm.loginBtn">
-						login.getKaisa().login(f.getLogin(), f.getPassword(), function(r) {
+						$kaisa.login(f.getLogin(), f.getPassword(), function(r) {
 							login.setOk(r)
+							if(r)
+								login.setVisible(false)
 						})
 					</button>
 				</button-set>

@@ -141,7 +141,7 @@ $control.register = function(c) {
 }
 
 $control.fromDom = function(node/*, context*/) {
-	var context = {}.extend(arguments.length>1 ? arguments[1] : {})
+	var context = $.extend({}, arguments.length>1 ? arguments[1] : {})
 	var res = null
 	function processName(nm) {
 		return nm.toLowerCase().split("-")._map(function(v) {
@@ -211,6 +211,15 @@ $control.fromDom = function(node/*, context*/) {
 				}
 			}
 		}
+	}
+	res.context_eval = function(s) {
+		var names = []
+		var args = []
+		for(var i in context) {
+			names.push(i)
+			args.push(context[i])
+		}
+		return eval("(function(" + names.join(", ") + ") {\n" + s + "\n})").apply(res, args)
 	}
 	return res
 }

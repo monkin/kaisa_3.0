@@ -1,6 +1,6 @@
 
 
-function $kaisa(struct) {
+var $kaisa = function (struct) {
 	type_by_name = {}
 	type_by_id = {}
 	struct._each(function(ot) {
@@ -15,6 +15,7 @@ function $kaisa(struct) {
 	var languages = [$language.current]
 	var structManager = {
 		login: function(l, p, fn) {
+			document.cookie = "JSESSIONID=; expires=Thu, 01-Jan-90 00:00:01 GMT; path=" + location.href.replace(/http:\/\/[^\/]+/, "").replace(/\/[^\/]*$/, "")
 			$.ajax({
 				type: "post",
 				url: "plainLogin.do",
@@ -84,5 +85,6 @@ function $kaisa(struct) {
 			
 		}
 	}
+	$kaisa = structManager
 	return structManager
 }

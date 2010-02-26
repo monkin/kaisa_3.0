@@ -4,6 +4,9 @@
 		<title>КАИСА</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<link rel="stylesheet" href="k3/themes/ui-lightness/jquery-ui.css" type="text/css"/>
+		<style type="text/css">
+			body { font-size: 12px; }
+		</style>
 	</head>
 	<body>
 		<script type="text/javascript" src="k3/jquery.js"></script>
@@ -11,25 +14,35 @@
 		<script type="text/javascript" src="k3/jquery-ui.js"></script>
 		<script type="text/javascript" src="k3/script.js"></script>
 		<script type="text/javascript">
-			function may_test() {
-				$form("login", function(f) {
-					$("body").append(f.node())
-					f.setVisible("true")
+			function kaisa_start() {
+				$.ajax({
+					url: "k3/db.json",
+					dataType: "json",
+					success: function(db) {
+						$kaisa(db)
+						var login = $form("login")
+						$("body").append(login.node())
+						login.changeVisible.add(function() {
+							if(!login.getOk()) {
+								if(!login.getVisible())
+									$afterAll(function() { login.setVisible(true); })
+							} else {
+								$form("menu", function(f) {
+									$("body").append(f.node())
+								})
+							}
+						})
+						login.setVisible(true)
+					}
 				})
-				/*var f1 = $control("string")
-				var f2 = $control("string")
-				f2.property("value").bind(f1.property("value"), "length")
-				$("body").append(f1.node())
-				$("body").append(f2.node())*/
 			}
 			$(function() {
 				$resources.load("k3/resources.xml", function() {
 					$form.init(function() {
-						may_test()
+						kaisa_start()
 					})
 				})
 			})
 		</script>
-		<div id="t"></div>
 	</body>
 </html>

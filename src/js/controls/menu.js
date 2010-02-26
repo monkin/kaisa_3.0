@@ -30,10 +30,7 @@ $control.register({
 		}
 		var curr = null
 		function selectItem(i) {
-			$log("select")
-			$log(i)
 			if(selectedItem!=i) {
-				$log("good")
 				selectedItem = i
 				$form(i.form, function(f) {
 					if(curr)
