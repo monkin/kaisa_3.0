@@ -8,8 +8,18 @@ var $kaisa = function (struct) {
 		type_by_id[ot.id] = ot
 	})
 	function updateObject(o, xml, lang) {
-		function upd(och, nd) {
-		
+		function upd(x, nd) {
+			if(x.nodeName == "object" || x.nodeName=="block") {
+				$.each($(x).children(), function() {
+					updateObject(o, this, lang)
+				})
+			} else if(x.nodeName == "attribute") {
+			
+			} else if(x.nodeName == "group") {
+			
+			}  else if(x.nodeName == "groupRecord") {
+			
+			}
 		}
 	}
 	var languages = [$language.current]
@@ -64,7 +74,9 @@ var $kaisa = function (struct) {
 					
 				},
 				loaded: function() {
-					
+					return languages.accumulate(true, function(r, l) {
+						return r && loaded[l.id]
+					})
 				},
 				load: function(fn) {
 					
