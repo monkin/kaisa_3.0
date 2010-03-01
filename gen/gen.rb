@@ -296,7 +296,9 @@ class Kaisa
 				"type" => attr.data_type,
 				"readonly" => attr.readonly,
 				"required" => attr.required,
-				"privileges" => attr.privileges
+				"privileges" => attr.privileges,
+				"ref_type" => attr.connected_type,
+				"ref_attr" => attr.connected_attribute
 			}
 			res["connected_type"] = attr.connected_type if attr.connected_type
 			res["connected_attribute"] = attr.connected_attribute if attr.connected_attribute

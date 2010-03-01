@@ -28,7 +28,7 @@
 		<copy todir="dist/k3/forms/local">
 			<fileset dir="src/forms"/>
 		</copy>
-		<copy file="build/menu.xml" todir="dist/k3/forms"/>
+		<!--<copy file="build/menu.xml" todir="dist/k3/forms"/>-->
 		<copy file="build/forms.xml" todir="dist/k3"/>
 		<copy file="build/db.json" todir="dist/k3"/>
 	</target>
@@ -38,7 +38,7 @@
 		<delete dir="dist"/>
 	</target>
 	<target name="deploy">
-		<copy todir="/home/andrey/soft/tomcat/webapps/intranet">
+		<copy todir="/home/andrey/soft/tomcat/webapps/afishaspb">
 			<fileset dir="dist"/>
 		</copy>
 	</target>
