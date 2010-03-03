@@ -202,6 +202,13 @@ var $kaisa = function (struct) {
 							setPage: function(p) {
 								page = p
 							},
+							getPageSize: function() {
+								return pageSize
+							},
+							setPageSize: function(ps) {
+								pageSize = ps
+								return res
+							},
 							objects: function(fn) {
 								searchQuery("getObjectListXML.do",
 									$xml($xml.element("list",
@@ -223,7 +230,17 @@ var $kaisa = function (struct) {
 										})
 							},
 							pages: function(fn) {
-							
+								/*<?xml version="1.0"?><pageList objectType="10230" page="1" pageSize="20" language="1" searchID="3"/>*/
+								searchQuery("getObjectPageListXML.do",
+									$xml($xml.element("pageList",
+										$xml.attribute("objectType", ot.id),
+										$xml.attribute("page", page),
+										$xml.attribute("pageSize", pageSize),
+										$xml.attribute("language", $language.current.id),
+										$xml.attribute("searchID", searchId))),
+									function(nd) {
+										$log(nd)
+									});
 							}
 						}
 						fn(res)
