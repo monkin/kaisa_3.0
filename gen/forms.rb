@@ -78,4 +78,12 @@ module Forms
 			res
 		end
 	end
+	class ListForm
+		def initialize(ot)
+			@object_type = ot
+		end
+		def to_xml
+			
+		end
+	end
 end

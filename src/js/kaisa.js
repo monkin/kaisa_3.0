@@ -52,6 +52,8 @@ var $kaisa = function (struct) {
 				x[nd.getAttribute("systemName")] = gval
 			}
 		}
+		o.id = xml.getAttribute("id")
+		o.type = ot
 		upd(o.value, xml)
 		upd(o.old_value, xml)
 	}
@@ -230,7 +232,6 @@ var $kaisa = function (struct) {
 										})
 							},
 							pages: function(fn) {
-								/*<?xml version="1.0"?><pageList objectType="10230" page="1" pageSize="20" language="1" searchID="3"/>*/
 								searchQuery("getObjectPageListXML.do",
 									$xml($xml.element("pageList",
 										$xml.attribute("objectType", ot.id),
@@ -239,7 +240,17 @@ var $kaisa = function (struct) {
 										$xml.attribute("language", $language.current.id),
 										$xml.attribute("searchID", searchId))),
 									function(nd) {
-										$log(nd)
+										if(nd) {
+											var res = []
+											$("page", nd).each(function() {
+												res.push({
+													name: $(this).attr("link"),
+													page: $(this).attr("pageNumber")
+												})
+											})
+											fn(res)
+										} else
+											fn(null)
 									});
 							}
 						}
