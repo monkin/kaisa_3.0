@@ -27,6 +27,11 @@
 								if(!login.getVisible())
 									$afterAll(function() { login.setVisible(true); })
 							} else {
+								$kaisa.search($kaisa.objectTypes()[0], [], function(sr) {
+									sr.objects(function(ol) {
+										$log(ol)
+									})
+								})
 								$form("menu", function(f) {
 									$("body").append(f.node())
 								})

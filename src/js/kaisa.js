@@ -7,26 +7,33 @@ var $kaisa = function (struct) {
 	struct._each(function(ot) {
 		type_by_name[ot.name] = ot
 		type_by_id[ot.id] = ot
+		ot.attr_by_name = {}
 		ot.attributes._each(function(a) {
 			attr_by_id[a.id] = a
+			ot.attr_by_name[a.name] = a
 		})
 		ot.groups._each(function(g) {
 			g.attributes._each(function(a) {
 				attr_by_id[a.id] = a
+				ot.attr_by_name[a.name] = a
 			})
 		})
 	})
 	function updateObject(o, xml, lang) {
+		/*$log("upd")
+		$log(xml)
+		$log(type_by_name[$(xml).attr("objectTypeName")])*/
+		var ot = type_by_name[$(xml).attr("objectTypeName")]
 		function upd(x, nd) {
-			if(x.nodeName == "object" || x.nodeName=="block" || x.nodeName=="sgroupRecord") {
-				$.each($(x).children(), function() {
-					updateObject(o, this, lang)
+			if(nd.nodeName == "object" || nd.nodeName=="block" || nd.nodeName=="sgroupRecord") {
+				$.each($(nd).children(), function() {
+					upd(x, this, lang)
 				})
-			} else if(x.nodeName == "attribute") {
-				var attr = attr_by_id[x.getAttribute("id")]
+			} else if(nd.nodeName == "attribute") {
+				var attr = ot.attr_by_name[nd.getAttribute("systemName")]
 				var value = null
 				if(attr.type=="PARENTRELATION" || attr.type=="DICTIONARY") {
-					var oid = x.getAttribute("dictionaryValue")
+					var oid = nd.getAttribute("dictionaryValue")
 					if(oid) {
 						value = {
 							ref: oid,
@@ -34,17 +41,19 @@ var $kaisa = function (struct) {
 						}
 					}
 				} else
-					value = $(x).text()
-				o[attr.name] = value
-			} else if(x.nodeName == "group") {
+					value = $(nd).text()
+				x[attr.name] = value
+			} else if(nd.nodeName == "group") {
 				var gval = []
-				$("groupRecord", x).each(function() {
+				$("groupRecord", nd).each(function() {
 					rval = {}
 					upd(rval, this)
 				})
-				o[nd.getAttribute("systemName")] = gval
+				x[nd.getAttribute("systemName")] = gval
 			}
 		}
+		upd(o.value, xml)
+		upd(o.old_value, xml)
 	}
 	function createObjectList(nd) {
 	
@@ -53,7 +62,7 @@ var $kaisa = function (struct) {
 	function searchQuery(act, data, fn) {
 		function nextQuery() {
 			var q = searchQueue[0]
-			$ajax({
+			$.ajax({
 				type: "post",
 				url: q.action,
 				data: { XMLReq: q.data },
@@ -174,19 +183,18 @@ var $kaisa = function (struct) {
 			})
 		},
 		search: function(ot, params, fn) {
-			/*<filter objectType="10229" language="1" isSearchInFound="0">
-			<attribute id="10441" condition="12" text-value="9" dictionary-value=""/>
-			</filter>*/
 			searchQuery("doSearchByXMLRequest.do",
 				$xml($xml.element("filter",
 					$xml.attribute("objectType", ot.id),
-					$xml.attribute("language", $language.current.id))),
+					$xml.attribute("language", $language.current.id),
+					$xml.attribute("isSearchInFound", "0"))),
 				function(nd) {
 					if(nd) {
 						var sr = $("searchReply", nd)
 						var searchId = sr.attr("searchID")
 						var count = sr.attr("objectsFounded")
 						var page = 1
+						var pageSize = 30
 						var res = {
 							getPage: function() {
 								return page
@@ -195,8 +203,24 @@ var $kaisa = function (struct) {
 								page = p
 							},
 							objects: function(fn) {
-								/*<?xml version="1.0"?>
-								<list objectType = "10229" page = "1" pageSize = "15" language = "1" search-id="3"/>*/
+								searchQuery("getObjectListXML.do",
+									$xml($xml.element("list",
+										$xml.attribute("objectType", ot.id),
+										$xml.attribute("page", page),
+										$xml.attribute("pageSize", pageSize),
+										$xml.attribute("language", $language.current.id),
+										$xml.attribute("searchID", searchId))), function(nd) {
+											if(nd) {
+												var r = []
+												$("object", nd).each(function() {
+													var o = structManager.createObject(ot)
+													updateObject(o, this, $language.current)
+													r.push(o)
+												})
+												fn(r)
+											} else
+												fn(null)
+										})
 							},
 							pages: function(fn) {
 							

@@ -38,7 +38,7 @@
 		<delete dir="dist"/>
 	</target>
 	<target name="deploy">
-		<copy todir="/home/andrey/soft/tomcat/webapps/afishaspb">
+		<copy todir="/home/andrey/soft/tomcat/webapps/intranet">
 			<fileset dir="dist"/>
 		</copy>
 	</target>
