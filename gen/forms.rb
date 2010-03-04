@@ -83,7 +83,36 @@ module Forms
 			@object_type = ot
 		end
 		def to_xml
+			res = REXML::Document.new()
+			res.add(REXML::XMLDecl.new)
 			
+			ks = REXML::Element.new("kaisa-searcher")
+			ks.add_attribute("id", "searcher")
+			ks.add_attribute("object-type", @object_type.system_name)
+			res.add(ks)
+			
+			ls = REXML::Element.new("kaisa-list")
+			ks.add(ls)
+			ls.add_attribute("search", "\#{searcher.search}")
+			
+			o = REXML::Element.new("attributes")
+			o.add_attribute("id", "obj")
+			o.add_attribute("names", "object")
+			ls.add(o)
+			
+			row = REXML::Element.new("row")
+			o.add(row)
+			
+			@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.each do |a|
+				st = REXML::Element.new("static-text")
+				if [:PARENTRELATION, :DICTIONARY].member? a.data_type
+					st.add_attribute("text", "\#{obj.object.value.#{a.system_name}.text}")
+				else
+					st.add_attribute("text", "\#{obj.object.value.#{a.system_name}}")
+				end
+				row.add(st)
+			end
+			res
 		end
 	end
 end

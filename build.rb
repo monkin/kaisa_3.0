@@ -43,13 +43,21 @@ Dir.chdir("build") do
 			conf_el.add_attribute("template", "forms/#{ot.system_name}/edit.xml")
 			conf.root.add(conf_el)
 			
+			conf_el = REXML::Element.new("form")
+			conf_el.add_attribute("name", "#{ot.system_name}_list")
+			conf_el.add_attribute("template", "forms/#{ot.system_name}/list.xml")
+			conf.root.add(conf_el)
+			
 			item = REXML::Element.new("menu-item")
 			item.add_attribute("label", "kaisa.type_#{ot.system_name}")
-			item.add_attribute("form", "#{ot.system_name}_edit")
+			item.add_attribute("form", "#{ot.system_name}_list")
 			menu.root.add(item)
 			
 			Dir.mkdir(ot.system_name) unless File.exist?(ot.system_name)
 			Dir.chdir(ot.system_name) do
+				File.open("list.xml", "w") do |f|
+					REXML::Formatters::Pretty.new(2).write(Forms::ListForm.new(ot).to_xml, f)
+				end
 				File.open("edit.xml", "w") do |f|
 					REXML::Formatters::Pretty.new(2).write(Forms::EditForm.new(ot).to_xml, f)
 				end

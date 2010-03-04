@@ -20,14 +20,11 @@ var $kaisa = function (struct) {
 		})
 	})
 	function updateObject(o, xml, lang) {
-		/*$log("upd")
-		$log(xml)
-		$log(type_by_name[$(xml).attr("objectTypeName")])*/
 		var ot = type_by_name[$(xml).attr("objectTypeName")]
 		function upd(x, nd) {
 			if(nd.nodeName == "object" || nd.nodeName=="block" || nd.nodeName=="sgroupRecord") {
 				$.each($(nd).children(), function() {
-					upd(x, this, lang)
+					upd(x, this)
 				})
 			} else if(nd.nodeName == "attribute") {
 				var attr = ot.attr_by_name[nd.getAttribute("systemName")]
@@ -37,7 +34,7 @@ var $kaisa = function (struct) {
 					if(oid) {
 						value = {
 							ref: oid,
-							text: $(x).text()
+							text: $(nd).text()
 						}
 					}
 				} else
@@ -48,6 +45,7 @@ var $kaisa = function (struct) {
 				$("groupRecord", nd).each(function() {
 					rval = {}
 					upd(rval, this)
+					gval.push(rval)
 				})
 				x[nd.getAttribute("systemName")] = gval
 			}

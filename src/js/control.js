@@ -108,6 +108,7 @@ $control = function(nm) {
 						bindedTo = prop
 						if(prop.change)
 							prop.change.add(updateSelf)
+						p.set(prop.get())
 					}
 					return p
 				},
@@ -173,44 +174,46 @@ $control.fromDom = function(node/*, context*/) {
 			}
 		}
 	}
-	for(var i=node.firstChild; i; i=i.nextSibling) {
-		if(i.nodeType==1) {
-			if(c_class.container) {
-				res.add(function() {
-					var c = $control.fromDom(i, context)
-					if(i.getAttribute("id"))
-						context[i.getAttribute("id")] = c
-					return c
-				})
-			} else {
-				var nm = processName(i.nodeName)
-				var fn = res["set" + nm] || res["add" + nm]
-				if(fn) {
-					var val = {
-						value: null,
-						control: null
-					}
-					for(var j=i.firstChild; j; j=j.nextSibling)
-						if(j.nodeType==1) {
-							val.control = (function(cNode) {
-									return function() {
-											var r = $control.fromDom(cNode, context)
-											if(cNode.getAttribute("id"))
-												context[cNode.getAttribute("id")] = r
-											return r
-										}
-								})(j)
-							break
+	for(var _i=node.firstChild; _i; _i=_i.nextSibling) {
+		(function(i) {
+			if(i.nodeType==1) {
+				if(c_class.container) {
+					res.add(function() {
+						var c = $control.fromDom(i, context)
+						if(i.getAttribute("id"))
+							context[i.getAttribute("id")] = c
+						return c
+					})
+				} else {
+					var nm = processName(i.nodeName)
+					var fn = res["set" + nm] || res["add" + nm]
+					if(fn) {
+						var val = {
+							value: null,
+							control: null
 						}
-					if(!val.control)
-						val.value = $(i).text()
-					var a = i.attributes
-					for(var j=0; j<a.length; j++)
-						val[a[j].name] = a[j].value
-					fn(val)
+						for(var j=i.firstChild; j; j=j.nextSibling)
+							if(j.nodeType==1) {
+								val.control = (function(cNode) {
+										return function() {
+												var r = $control.fromDom(cNode, context)
+												if(cNode.getAttribute("id"))
+													context[cNode.getAttribute("id")] = r
+												return r
+											}
+									})(j)
+								break
+							}
+						if(!val.control)
+							val.value = $(i).text()
+						var a = i.attributes
+						for(var j=0; j<a.length; j++)
+							val[a[j].name] = a[j].value
+						fn(val)
+					}
 				}
 			}
-		}
+		})(_i)
 	}
 	res.context_eval = function(s) {
 		var names = []
