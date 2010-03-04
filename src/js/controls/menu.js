@@ -4,16 +4,16 @@ $control.register({
 	name: "menu",
 	css: [".c-menu { width: 100%; overflow: hidden; }",
 		".c-menu-item { border-right-width: 0 !important; margin: 0.6em 0 0.6em 0.6em; padding: 0.1em; padding: 0.1em 0.6em 0.2em 0.6em; white-space: nowrap; cursor: pointer; }",
-		".c-menu-cell { height: 100%; }",
+		".c-menu-cell { height: 100%; vertical-align: top; }",
 		".c-menu-item-active { position: relative; left: 1px; cursor: default; }",
 		".c-menu-height { height: 100%; }",
-		".c-menu-content { border-width: 0 !important; padding: 0.6em; }",
+		".c-menu-content { border-width: 0 !important; padding: 0.6em; min-height: 100%; }",
 		".c-menu-content-cell { width: 100%; vertical-align: top; }",
 		".c-menu-item-box { border-style: none solid none none !important; padding-top: 0.1em; height: 100%; background-image: none; overflow: visible; }"].join(";\n"),
 	create: function() {
 		var item_container = $("<div class=\"ui-widget-header c-menu-item-box\"></div>")
 		var content = $("<div class=\"ui-widget-content c-menu-content\"></div>")
-		var node = $("<table cellspacing=\"0\" cellpadding=\"0\" class=\"ui-widget ui-widget-content c-menu ui-corner-all \"><tbody class=\"c-menu-height\"><tr class=\"c-menu-height\"><td class=\"c-menu-cell\"></td><td class=\"c-menu-cell c-menu-content-cell\"></td></tr></tbody></table>")
+		var node = $("<table cellspacing=\"0\" cellpadding=\"0\" class=\"ui-widget ui-widget-content c-menu ui-corner-all\"><tbody class=\"c-menu-height\"><tr class=\"c-menu-height\"><td class=\"c-menu-cell\"></td><td class=\"c-menu-cell c-menu-content-cell\"></td></tr></tbody></table>")
 		$("td:first", node).append(item_container)
 		$("td:last", node).append(content)
 		var items = []

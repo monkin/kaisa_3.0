@@ -194,7 +194,7 @@ var $kaisa = function (struct) {
 						var searchId = sr.attr("searchID")
 						var count = sr.attr("objectsFounded")
 						var page = 1
-						var pageSize = 30
+						var pageSize = 25
 						var res = {
 							getPage: function() {
 								return page
@@ -242,7 +242,8 @@ var $kaisa = function (struct) {
 											var res = []
 											$("page", nd).each(function() {
 												res.push({
-													name: $(this).attr("link"),
+													active: $(this).attr("link")!="1",
+													name: $(this).text(),
 													page: $(this).attr("pageNumber")
 												})
 											})
