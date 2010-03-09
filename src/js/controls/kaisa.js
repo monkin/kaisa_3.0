@@ -2,9 +2,7 @@
 $control.register({
 	name: "kaisa-searcher",
 	container: true,
-	css: [
-			".c-kaisa-searcher { padding: 0.4em; }"
-		].join(";\n"),
+	css: [".c-kaisa-searcher { padding: 0.4em; }"].join(";\n"),
 	create: function() {
 		var node = $("<div class=\"c-kaisa-searcher ui-widget ui-widget-content ui-corner-all\"></div>")
 		var sr = null
@@ -82,6 +80,7 @@ $control.register({
 									node: nd
 								})
 							}
+							$log(ol)
 							ol._each(function(i, v) {
 								childPool[i].control.setObject(v)
 								childPool[i].node.show()

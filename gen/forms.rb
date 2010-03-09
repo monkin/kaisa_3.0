@@ -100,8 +100,11 @@ module Forms
 			o.add_attribute("names", "object")
 			ls.add(o)
 			
+			collapse = REXML::Element.new("collapse")
+			o.add(collapse)
+			
 			row = REXML::Element.new("row")
-			o.add(row)
+			collapse.add(row)
 			
 			@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.each do |a|
 				st = REXML::Element.new("static-text")

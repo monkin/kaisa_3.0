@@ -9,11 +9,14 @@ var $kaisa = function (struct) {
 		type_by_id[ot.id] = ot
 		ot.attr_by_name = {}
 		ot.attributes._each(function(a) {
+			a.objectType = ot
 			attr_by_id[a.id] = a
 			ot.attr_by_name[a.name] = a
 		})
 		ot.groups._each(function(g) {
+			g.objectType = ot
 			g.attributes._each(function(a) {
+				a.objectType = ot
 				attr_by_id[a.id] = a
 				ot.attr_by_name[a.name] = a
 			})
@@ -167,7 +170,27 @@ var $kaisa = function (struct) {
 					loaded = true
 				},
 				viewModes: function(fn) {
-					
+					if(obj.id) {
+						searchQuery("getModeListXML.do", 
+							$xml($xml.element("object", $xml.attribute("id", obj.id), $xml.attribute("language", $language.current.id))),
+							function(nd) {
+								var res = []
+								$("modeCell", nd).each(function() {
+									var mc = $(this)
+									if(/^[HD]/.test(mc.attr("viewMode")))
+										res.push({
+											name: mc.attr("name"),
+											length: mc.attr("numRecords"),
+											objectType: attr_by_id[mc.attr("idAttribute")].objectType,
+											objects: function(params, fn2) {
+												
+											}
+										})
+								})
+								fn(res)
+							})
+					} else
+						fn([])
 				},
 				remove: function(fn) {
 					
@@ -219,7 +242,7 @@ var $kaisa = function (struct) {
 										$xml.attribute("searchID", searchId))), function(nd) {
 											if(nd) {
 												var r = []
-												$("object", nd).each(function() {
+												$("objectList > object", nd).each(function() {
 													var o = structManager.createObject(ot)
 													updateObject(o, this, $language.current)
 													r.push(o)
