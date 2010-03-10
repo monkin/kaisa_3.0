@@ -100,8 +100,14 @@ module Forms
 			o.add_attribute("names", "object")
 			ls.add(o)
 			
+			vbox = REXML::Element.new("vbox")
+			o.add(vbox)
+			
+			
 			collapse = REXML::Element.new("collapse")
-			o.add(collapse)
+			collapse.add_attribute("id", "collapse")
+			vbox.add(collapse)
+			
 			
 			row = REXML::Element.new("row")
 			collapse.add(row)
@@ -115,6 +121,24 @@ module Forms
 				end
 				row.add(st)
 			end
+			
+			lazy = REXML::Element.new("lazy")
+			lazy.add_attribute("visible", "\#{collapse.expanded}")
+			vbox.add(lazy)
+			mode_list = REXML::Element.new("kaisa-mode-list")
+			mode_list.add_attribute("object", "\#{obj.object}")
+			lazy.add(mode_list)
+			
+			attrb = REXML::Element.new("attributes")
+			attrb.add_attribute("id", "mode")
+			attrb.add_attribute("names", "view-mode")
+			mode_list.add(attrb)
+			
+			collapse2 = REXML::Element.new("collapse")
+			attrb.add(collapse2)
+			st = REXML::Element.new("static-text")
+			st.add_attribute("text", "\#{mode.viewMode.name}")
+			collapse2.add(st)
 			res
 		end
 	end

@@ -43,8 +43,12 @@ $control.register({
 					icon.removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-minus")
 				return res
 			},
-			changeCollapsed: $handler()
+			changeCollapsed: $handler(),
+			getExpanded: function() {
+				return !collapsed
+			}
 		}
+		res.changeExpanded = res.changeCollapsed
 		return res
 	}
 })

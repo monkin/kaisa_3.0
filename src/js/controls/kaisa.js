@@ -159,40 +159,64 @@ $control.register({
 
 
 $control.register({
-	name: "row",
+	name: "kaisa-mode-list",
 	container: true,
 	create: function() {
-		var node = $("<table class=\"c-row\"><tbody><tr class=\"c-row-item\"></tr></tbody></table>")
-		var row = $("tr", node)
+		var node = $("<div></div>")
+		var obj = null
+		var childPool = []
+		var controlBuilder = null
+		var requestId = null
+		function updateModes() {
+			if(controlBuilder && obj) {
+				var rqId = requestId = $uid()
+				obj.viewModes(function(vms) {
+					if(rqId==requestId) {
+						childPool._each(function(c) { $(c.node()).hide(); })
+						vms._each(function(i, vm) {
+							if(!childPool[i]) {
+								childPool[i] = $control.get(controlBuilder)
+								node.append(childPool[i].node())
+							}
+							if(childPool[i].setViewMode)
+								childPool[i].setViewMode(vm)
+							$(childPool[i].node()).show()
+						})
+					}
+				})
+			} else
+				childPool._each(function(c) { $(c.node()).hide(); })
+		}
 		var res = {
 			node: function() {
 				return node
 			},
 			add: function(c) {
-				row.append($("<td></td>").append($control.get(c).node()))
-				var rch = $(row.children()).filter("td")
-			}
+				if(controlBuilder)
+					throw new Error("Child control allready added")
+				else
+					controlBuilder = c
+				updateModes()
+				return res
+			},
+			setObject: function(o) {
+				if(o!=obj) {
+					obj = o
+					updateModes()
+					res.changeObject()
+				}
+				return res
+			},
+			getObject: function() {
+				return obj
+			},
+			changeObject: $handler()
 		}
 		return res
 	}
 })
 
-$control.register({
-	name: "static-text",
-	create: function() {
-		var node = $("<span></span>")
-		var res = {
-			node: function() {
-				return node;
-			},
-			getText: function() {
-				node.text()
-			},
-			setText: function(t) {
-				node.text(t)
-				return res
-			}
-		}
-		return res
-	}
-})
+
+
+
+

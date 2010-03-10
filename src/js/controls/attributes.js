@@ -12,7 +12,9 @@ $control.register({
 			setNames: function(names) {
 				names.split(";")._each(function(nm) {
 					var val = null
-					nm = nm.substring(0, 1).toUpperCase() + nm.substring(1, nm.length)
+					nm = nm.split(/-/)._map(function(x) {
+							return x.substring(0, 1).toUpperCase() + x.substring(1, x.length)
+						}).join("")
 					res["change" + nm] = $handler()
 					res["get" + nm] = function() {
 						return val
