@@ -12,7 +12,7 @@
 	<attributes id="f" names="login;password">
 		<window title="loginForm.title" visible="#{login.visible}">
 			<vbox>
-				<error-message id="error" visible="no" message="loginForm.error"/>
+				<message id="error" mode="error" visible="no" message="loginForm.error"/>
 				<form>
 					<field label="loginForm.loginField">
 						<string id="tmp" value="#{f.login}"/>

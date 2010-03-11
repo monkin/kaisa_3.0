@@ -127,7 +127,12 @@ module Forms
 			vbox.add(lazy)
 			mode_list = REXML::Element.new("kaisa-mode-list")
 			mode_list.add_attribute("object", "\#{obj.object}")
-			lazy.add(mode_list)
+			
+			indent = REXML::Element.new("vbox")
+			indent.add_attribute("indent", "0 0 0 2em")
+			lazy.add(indent)
+			
+			indent.add(mode_list)
 			
 			attrb = REXML::Element.new("attributes")
 			attrb.add_attribute("id", "mode")
@@ -137,7 +142,7 @@ module Forms
 			collapse2 = REXML::Element.new("collapse")
 			attrb.add(collapse2)
 			st = REXML::Element.new("static-text")
-			st.add_attribute("text", "\#{mode.viewMode.name}")
+			st.add_attribute("text", "\#{mode.viewMode.label}")
 			collapse2.add(st)
 			res
 		end

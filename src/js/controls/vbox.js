@@ -6,16 +6,22 @@ $control.register({
 		var gap = "0"
 		var node = $("<div></div>")
 		var children = []
+		var indent = "0 0 0 0"
 		var res = {
 			node: function() {
 				return node
 			},
 			setGap: function(g) {
 				gap = g
-				$log(g)
 				node.contents().css("padding-bottom", g)
 				node.contents().last().css("padding-bottom", "0")
 				return res
+			},
+			setIndent: function(i) {
+				node.css("padding", i)
+			},
+			getIndent: function() {
+				node.css("padding")
 			},
 			add: function(c) {
 				c = $control.get(c)

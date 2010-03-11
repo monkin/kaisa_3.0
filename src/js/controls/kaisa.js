@@ -137,8 +137,6 @@ $control.register({
 				return ksearch
 			},
 			setSearch: function(s) {
-				$log("kaisa-list.setSearch")
-				$log(s)
 				ksearch = s
 				updateList()
 				return res
@@ -162,7 +160,7 @@ $control.register({
 	name: "kaisa-mode-list",
 	container: true,
 	create: function() {
-		var node = $("<div></div>")
+		var node = $("<div class=\"c-kaisa-mode-list\"></div>")
 		var obj = null
 		var childPool = []
 		var controlBuilder = null
@@ -173,15 +171,17 @@ $control.register({
 				obj.viewModes(function(vms) {
 					if(rqId==requestId) {
 						childPool._each(function(c) { $(c.node()).hide(); })
-						vms._each(function(i, vm) {
-							if(!childPool[i]) {
-								childPool[i] = $control.get(controlBuilder)
-								node.append(childPool[i].node())
-							}
-							if(childPool[i].setViewMode)
-								childPool[i].setViewMode(vm)
-							$(childPool[i].node()).show()
-						})
+						vms._filter(function(vm) {
+								return vm.length!="0"
+							})._each(function(i, vm) {
+								if(!childPool[i]) {
+									childPool[i] = $control.get(controlBuilder)
+									node.append(childPool[i].node())
+								}
+								if(childPool[i].setViewMode)
+									childPool[i].setViewMode($.extend({ label: vm.name + " (" + vm.length + ")"  }, vm))
+								$(childPool[i].node()).show()
+							})
 					}
 				})
 			} else
