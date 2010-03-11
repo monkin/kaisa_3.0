@@ -21,7 +21,17 @@ Dir.chdir("build") do
 	unless File.exist? "resources.xml"
 		puts "update: resources.xml"
 		File.open("resources.xml", "w") do |f|
-			REXML::Formatters::Pretty.new(2).write(Resource::RDocument.new(kaisa.resources).to_xml, f)
+			doc = Resource::RDocument.new(kaisa.resources).to_xml
+			Dir.new("../src/resources").each do |cfn|
+				if cfn.match(/\.xml\z/)
+					File.open("../src/resources/#{cfn}") do |cf|
+						REXML::XPath.match(REXML::Document.new(cf), "/resources/*").each do |nd|
+							doc.root.add(nd)
+						end
+					end
+				end
+			end
+			REXML::Formatters::Pretty.new(2).write(doc, f)
 		end
 	end
 	

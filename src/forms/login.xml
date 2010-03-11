@@ -1,14 +1,5 @@
 <?xml version="1.0"?>
 <attributes id="login" names="ok;visible">
-	<resources>
-		<string-set name="loginForm">
-			<string name="error" value2="Invalid user name or password" value1="Неправильный логин или пароль"/>
-			<string name="title" value2="Login" value1="Ввведите имя и пароль"/>
-			<string name="loginField" value2="Login" value1="Логин"/>
-			<string name="passwordField" value2="Password" value1="Пароль"/>
-			<string name="loginBtn" value2="Login" value1="Войти"/>
-		</string-set>
-	</resources>
 	<attributes id="f" names="login;password">
 		<window title="loginForm.title" visible="#{login.visible}">
 			<vbox>

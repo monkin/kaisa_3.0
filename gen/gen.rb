@@ -10,6 +10,9 @@ module Resource
 		def initialize(*c)
 			@children = c.flatten
 		end
+		def join(rd)
+			RDocument.new(@children, rd.children)
+		end
 		def to_xml
 			res = REXML::Document.new("<?xml version='1.0'?><resources/>")
 			(@children.sort do |a,b|

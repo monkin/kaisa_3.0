@@ -14,7 +14,7 @@ $control.register({
 		function getModeClass() {
 			return ({
 				"error": "ui-state-error",
-				"info": "ui-state-highlight
+				"info": "ui-state-highlight"
 			})[mode]
 		}
 		var res = {
