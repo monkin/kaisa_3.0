@@ -7,10 +7,17 @@ $control.register({
 		var node = $("<div class=\"ui-widget c-message\"><div class=\"c-message-box ui-corner-all\" style=\"padding: 0pt 0.4em;\">" +
 			"<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: 0.4em;\"></span><span class=\"c-message-message\"></span></p></div></div>")
 		var box = $(".c-message-box", node)
+		var icon = $(".ui-icon", node)
 		box.addClass("ui-state-error")
 		var mode = "error"
 		var visible = true
 		var message = ""
+		function getIcon() {
+			return ({
+				"error": "ui-icon-alert",
+				"info": "ui-icon-info"
+			})[mode]
+		}
 		function getModeClass() {
 			return ({
 				"error": "ui-state-error",
@@ -29,8 +36,11 @@ $control.register({
 			},
 			setMode: function(md) {
 				box.removeClass(getModeClass())
+				icon.removeClass(getIcon())
 				mode = md
 				box.addClass(getModeClass())
+				icon.addClass(getIcon())
+				return res
 			},
 			setVisible: function(v) {
 				visible = (v=="no" || !v) ? false : true

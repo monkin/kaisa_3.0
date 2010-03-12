@@ -58,9 +58,6 @@ var $kaisa = function (struct) {
 		upd(o.value, xml)
 		upd(o.old_value, xml)
 	}
-	function createObjectList(nd) {
-	
-	}
 	var searchQueue = []
 	function searchQuery(act, data, fn) {
 		function nextQuery() {
@@ -182,8 +179,16 @@ var $kaisa = function (struct) {
 											name: mc.attr("name"),
 											length: mc.attr("numRecords"),
 											objectType: attr_by_id[mc.attr("idAttribute")].objectType,
-											objects: function(params, fn2) {
-												
+											getSearchId: function(fnx) {
+												searchQuery("getViewModeXML.do",
+													$xml.element("object",
+														$xml.attribute("id", obj.id),
+														$xml.attribute("language", $language.current.id),
+														$xml.attribute("viewMode", mc.attr("viewMode")),
+														$xml.attribute("pageSize", "0")),
+													function(vmnd) {
+														fnx($("objectList", vmnd).attr("searchID"))
+													})
 											}
 										})
 								})
@@ -206,80 +211,89 @@ var $kaisa = function (struct) {
 			})
 		},
 		search: function(ot, params, fn) {
-			searchQuery("doSearchByXMLRequest.do",
-				$xml($xml.element("filter",
-					$xml.attribute("objectType", ot.id),
-					$xml.attribute("language", $language.current.id),
-					$xml.attribute("isSearchInFound", "0"))),
-				function(nd) {
-					if(nd) {
-						var sr = $("searchReply", nd)
-						var searchId = sr.attr("searchID")
-						var count = sr.attr("objectsFounded")
-						var page = 1
-						var pageSize = 25
-						var res = {
-							getPage: function() {
-								return page
-							},
-							setPage: function(p) {
-								page = p
-							},
-							getPageSize: function() {
-								return pageSize
-							},
-							setPageSize: function(ps) {
-								pageSize = ps
-								return res
-							},
-							objects: function(fn) {
-								searchQuery("getObjectListXML.do",
-									$xml($xml.element("list",
-										$xml.attribute("objectType", ot.id),
-										$xml.attribute("page", page),
-										$xml.attribute("pageSize", pageSize),
-										$xml.attribute("language", $language.current.id),
-										$xml.attribute("searchID", searchId))), function(nd) {
+			var parentSearchId = null
+			function doSearch() {
+				searchQuery("doSearchByXMLRequest.do",
+					$xml($xml.element("filter",
+						$xml.attribute("objectType", ot.id),
+						$xml.attribute("language", $language.current.id),
+						(parentSearchId ? $xml.attribute("searchID", parentSearchId) : []))),
+					function(nd) {
+						if(nd) {
+							var sr = $("searchReply", nd)
+							var searchId = sr.attr("searchID")
+							var count = sr.attr("objectsFounded")
+							var page = 1
+							var pageSize = 25
+							var res = {
+								getPage: function() {
+									return page
+								},
+								setPage: function(p) {
+									page = p
+								},
+								getPageSize: function() {
+									return pageSize
+								},
+								setPageSize: function(ps) {
+									pageSize = ps
+									return res
+								},
+								objects: function(fn) {
+									searchQuery("getObjectListXML.do",
+										$xml($xml.element("list",
+											$xml.attribute("objectType", ot.id),
+											$xml.attribute("page", page),
+											$xml.attribute("pageSize", pageSize),
+											$xml.attribute("language", $language.current.id),
+											$xml.attribute("searchID", searchId))), function(nd) {
+												if(nd) {
+													var r = []
+													$("objectList > object", nd).each(function() {
+														var o = structManager.createObject(ot)
+														updateObject(o, this, $language.current)
+														r.push(o)
+													})
+													fn(r)
+												} else
+													fn(null)
+											})
+								},
+								pages: function(fn) {
+									searchQuery("getObjectPageListXML.do",
+										$xml($xml.element("pageList",
+											$xml.attribute("objectType", ot.id),
+											$xml.attribute("page", page),
+											$xml.attribute("pageSize", pageSize),
+											$xml.attribute("language", $language.current.id),
+											$xml.attribute("searchID", searchId))),
+										function(nd) {
 											if(nd) {
-												var r = []
-												$("objectList > object", nd).each(function() {
-													var o = structManager.createObject(ot)
-													updateObject(o, this, $language.current)
-													r.push(o)
+												var res = []
+												$("page", nd).each(function() {
+													res.push({
+														active: $(this).attr("link")!="1",
+														name: $(this).text(),
+														page: $(this).attr("pageNumber")
+													})
 												})
-												fn(r)
+												fn(res)
 											} else
 												fn(null)
-										})
-							},
-							pages: function(fn) {
-								searchQuery("getObjectPageListXML.do",
-									$xml($xml.element("pageList",
-										$xml.attribute("objectType", ot.id),
-										$xml.attribute("page", page),
-										$xml.attribute("pageSize", pageSize),
-										$xml.attribute("language", $language.current.id),
-										$xml.attribute("searchID", searchId))),
-									function(nd) {
-										if(nd) {
-											var res = []
-											$("page", nd).each(function() {
-												res.push({
-													active: $(this).attr("link")!="1",
-													name: $(this).text(),
-													page: $(this).attr("pageNumber")
-												})
-											})
-											fn(res)
-										} else
-											fn(null)
-									});
+										});
+								}
 							}
-						}
-						fn(res)
-					} else
-						fn(null)
+							fn(res)
+						} else
+							fn(null)
+					})
+			}
+			if(arguments.length>3 && arguments[3]) {
+				arguments[3].getSearchId(function(sid) {
+					parentSearchId = sid
 				})
+			} else
+				doSearch()
 		}
 	}
 	$kaisa = structManager

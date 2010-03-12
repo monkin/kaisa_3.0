@@ -2,11 +2,24 @@
 $control.register({
 	name: "kaisa-searcher",
 	container: true,
-	css: [".c-kaisa-searcher { padding: 0.4em; }"].join(";\n"),
 	create: function() {
-		var node = $("<div class=\"c-kaisa-searcher ui-widget ui-widget-content ui-corner-all\"></div>")
+		var node = $("<div class=\"c-kaisa-searcher\"></div>")
 		var sr = null
 		var objectType = null
+		var viewMode = null
+		
+		var rqid = null
+		function updateSearch() {
+			var r = rqid = $uid()
+			if(objectType) {
+				$kaisa.search(objectType, [], function(s) {
+						if(r==rqid) {
+							sr = s
+							res.changeSearch()
+						}
+					}, viewMode)
+			}
+		}
 		var res = {
 			node: function() {
 				return node
@@ -14,16 +27,21 @@ $control.register({
 			add: function(c) {
 				node.append($control.get(c).node())
 			},
+			setViewMode: function(vm) {
+				viewMode = vm
+				updateSearch()
+				return res
+			},
+			getViewMode: function() {
+				return viewMode
+			},
 			setObjectType: function(ot) {
 				if(typeof ot == "string")
 					objectType = $kaisa.objectType(ot)
 				else
 					objectType = ot
-				$kaisa.search(objectType, [], function(s) {
-					sr = s
-					res.changeSearch()
-				})
-			},
+				updateSearch()
+			},			
 			getObjectType: function() {
 				return objectType
 			},
@@ -51,6 +69,7 @@ $control.register({
 				"float: right; " +
 				"text-decoration: none;" +
 				"border-style: none; }",
+			".c-kaisa-list-item { padding: 0.2em; }",
 			".c-kaisa-list-pages .ui-state-default { background-color: transparent; background-image: none; }",
 			".c-kaisa-list-page-disabled { cursor: default; font-weight: bold; }",
 			".c-kaisa-list-pages, .c-kaisa-list-item { border-width: 1px 0 0 0; background-color: transparent; background-image: none; }"
@@ -80,7 +99,6 @@ $control.register({
 									node: nd
 								})
 							}
-							$log(ol)
 							ol._each(function(i, v) {
 								childPool[i].control.setObject(v)
 								childPool[i].node.show()
@@ -155,12 +173,13 @@ $control.register({
 	}
 })
 
-
 $control.register({
 	name: "kaisa-mode-list",
 	container: true,
 	create: function() {
 		var node = $("<div class=\"c-kaisa-mode-list\"></div>")
+		var msg = $control("message").setVisible(false).setMode("info").setMessage("controls.kaisa-mode-list.empty-msg")
+		node.append(msg.node())
 		var obj = null
 		var childPool = []
 		var controlBuilder = null
@@ -171,9 +190,12 @@ $control.register({
 				obj.viewModes(function(vms) {
 					if(rqId==requestId) {
 						childPool._each(function(c) { $(c.node()).hide(); })
-						vms._filter(function(vm) {
+						var empty = true
+						vms = vms._filter(function(vm) {
 								return vm.length!="0"
-							})._each(function(i, vm) {
+							})
+						vms._each(function(i, vm) {
+								empty = false
 								if(!childPool[i]) {
 									childPool[i] = $control.get(controlBuilder)
 									node.append(childPool[i].node())
@@ -182,6 +204,7 @@ $control.register({
 									childPool[i].setViewMode($.extend({ label: vm.name + " (" + vm.length + ")"  }, vm))
 								$(childPool[i].node()).show()
 							})
+						msg.setVisible(empty)
 					}
 				})
 			} else

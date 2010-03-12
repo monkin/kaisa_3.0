@@ -18,7 +18,7 @@ Dir.chdir("build") do
 			Kaisa.new(xm)
 		end
 	end
-	unless File.exist? "resources.xml"
+	#unless File.exist? "resources.xml"
 		puts "update: resources.xml"
 		File.open("resources.xml", "w") do |f|
 			doc = Resource::RDocument.new(kaisa.resources).to_xml
@@ -33,7 +33,7 @@ Dir.chdir("build") do
 			end
 			REXML::Formatters::Pretty.new(2).write(doc, f)
 		end
-	end
+	#end
 	
 	unless File.exist? "db.json"
 		puts "Serializing db structure"

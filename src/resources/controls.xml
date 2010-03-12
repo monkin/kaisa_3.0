@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
 <resources>
 	<string-set name="controls">
-		<string-set name='viewMode'>
-			<string name='emptyMsg' value1='Нет ссылок на данный объект' value2='Have no references to this object'/>
+		<string-set name='kaisa-mode-list'>
+			<string name='empty-msg' value1='Нет ссылок на данный объект' value2='Have no references to this object'/>
 		</string-set>
 	</string-set>
 </resources>

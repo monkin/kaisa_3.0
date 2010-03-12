@@ -6,7 +6,7 @@ $control.register({
 	container: true,
 	css: [".c-window { position: relative; display: inline-block; padding: 4px; margin-top: -50%; margin-left: -50%; }",
 			".c-window-pos { position: absolute; left: 50%; top: 50%; overflow: visible; }",
-			".c-window-background { position: absolute; left: 0; top: 0; right: 0; bottom: 0; display: none; text-align: center; vertical-align: middle; }",
+			".c-window-background { position: fixed; left: 0; top: 0; right: 0; bottom: 0; display: none; text-align: center; vertical-align: middle; }",
 			".ui-dialog-title-dialog { cursor: default }",
 			".ui-dialog-titlebar-close { cursor: pointer; }",
 			".c-window-hidden { display: none; }",
