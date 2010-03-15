@@ -26,11 +26,10 @@ $control.register({
 			add: function(c) {
 				c = $control.get(c)
 				children.push(c)
-				$log(gap)
 				node.contents().last().css("padding-bottom", gap)
 				node.append($("<div></div>").append(c.node()))
 				return res
-			},
+			}/*,
 			remove: function(c) {
 				children = children.filter(function(c2) {
 					return c!=c2
@@ -38,7 +37,7 @@ $control.register({
 				c.node().remove()
 				setGap(gap)
 				return res
-			}
+			}*/
 		}
 		return res
 	}

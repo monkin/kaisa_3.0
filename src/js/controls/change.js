@@ -10,18 +10,19 @@ $control.register({
 				return node
 			},
 			getListen: function() {
-			
+				return null;
 			},
 			setListen: function(l) {
 				actions._each(function(a) {
 					a()
 				})
 			},
-			addAction: function(act) {
+			setAction: function(act) {
 				actions.push(function() {
 						$log("action")
+						$log(act)
 						if(res.context_eval)
-							res.context_eval(act.value)
+							res.context_eval(act)
 					})
 			}
 		}

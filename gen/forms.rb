@@ -109,6 +109,9 @@ module Forms
 									Xml.attr("visible", "\#{collapse.expanded}"),
 									Xml.element("vbox",
 										Xml.attr("indent", "0 0 0 2em"),
+										Xml.element("change",
+											Xml.attr("listen", "\#{obj.object}"),
+											Xml.attr("action", "collapse.setCollapsed(true)")),
 										Xml.element("kaisa-mode-list",
 											Xml.attr("object", "\#{obj.object}"),
 											Xml.element("attributes",
@@ -116,11 +119,7 @@ module Forms
 												Xml.attr("names", "view-mode"),
 												Xml.element("collapse",
 													Xml.element("static-text",
-														Xml.attr("text", "\#{mode.viewMode.label}"))))),
-										Xml.element("change",
-											Xml.attr("listen", "\#{obj.object}"),
-											Xml.attr("action", "collapse.setCollapsed(true)")))))))))
-
+														Xml.attr("text", "\#{mode.viewMode.label}"))))))))))))
 				res
 #			res = REXML::Document.new()
 #			res.add(REXML::XMLDecl.new)

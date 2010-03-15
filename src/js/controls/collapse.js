@@ -36,16 +36,19 @@ $control.register({
 			},
 			setCollapsed: function(c) {
 				collapsed = c && c!="no"
-				res.changeCollapsed()
 				if(collapsed)
 					icon.addClass("ui-icon-circle-plus").removeClass("ui-icon-circle-minus")
 				else
 					icon.removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-minus")
+				res.changeCollapsed()
 				return res
 			},
 			changeCollapsed: $handler(),
 			getExpanded: function() {
 				return !collapsed
+			},
+			setExpanded: function(e) {
+				collapsed = !e || e=="no";
 			}
 		}
 		res.changeExpanded = res.changeCollapsed

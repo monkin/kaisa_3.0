@@ -27,6 +27,10 @@ $control.register({
 			setVisible: function(v) {
 				visible = v && v!="no"
 				updateNode()
+				if(!visible && child) {
+					child.remove()
+					child = null
+				}
 				res.changeVisible()
 			},
 			changeVisible: $handler(),

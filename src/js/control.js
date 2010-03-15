@@ -98,17 +98,22 @@ $control = function(nm) {
 				set: res["set" + p_name],
 				change: res["change" + p_name],
 				bind: function(prop/*, path*/) {
-					if(arguments.length>1)
-						prop = pathWrapper(prop, arguments[1])
-					if(prop==bindedTo)
-						return p
-					if(bindedTo)
-						p.unbind()
-					if(prop) {
-						bindedTo = prop
-						if(prop.change)
-							prop.change.add(updateSelf)
-						p.set(prop.get())
+					inChange = true
+					try {
+						if(arguments.length>1)
+							prop = pathWrapper(prop, arguments[1])
+						if(prop==bindedTo)
+							return p
+						if(bindedTo)
+							p.unbind()
+						if(prop) {
+							bindedTo = prop
+							if(prop.change)
+								prop.change.add(updateSelf)
+							p.set(prop.get())
+						}
+					} finally {
+						inChange = false
 					}
 					return p
 				},
@@ -149,8 +154,14 @@ $control.fromDom = function(node/*, context*/) {
 			return v.substring(0, 1).toUpperCase() + v.substring(1, v.length)
 		}).join("")
 	}
-	var c_class = $control.classes[node.nodeName]
-	var res = $control(node.nodeName)
+	var c_class = null;
+	var res = null;
+	c_class = $control.classes[node.nodeName]
+	if(!c_class) {
+		$log.error("Can't create control: " + node.nodeName)
+		throw new Error("Can't create control: " + node.nodeName)
+	}
+	res = $control(node.nodeName)
 	if(node.getAttribute("id"))
 		context[node.getAttribute("id")] = res
 	var attrs = node.attributes
