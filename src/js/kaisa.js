@@ -217,7 +217,7 @@ var $kaisa = function (struct) {
 					$xml($xml.element("filter",
 						$xml.attribute("objectType", ot.id),
 						$xml.attribute("language", $language.current.id),
-						$xml.attribute("searchID", parentSearchId ? parentSearchId : "0"))),
+						parentSearchId ? $xml.attribute("searchID", parentSearchId) : [])),
 					function(nd) {
 						if(nd) {
 							var sr = $("searchReply", nd)

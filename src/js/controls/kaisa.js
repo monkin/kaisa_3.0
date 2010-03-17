@@ -9,9 +9,10 @@ $control.register({
 		var viewMode = null
 		var searchIn = null
 		var rqid = null
+		var ignoreSearch = true
 		function updateSearch() {
 			var r = rqid = $uid()
-			if(objectType) {
+			if(objectType && !ignoreSearch) {
 				$kaisa.search(objectType, [], function(s) {
 						if(r==rqid) {
 							sr = s
@@ -22,6 +23,10 @@ $control.register({
 		}
 		var res = {
 			node: function() {
+				if(ignoreSearch) {
+					ignoreSearch = false
+					updateSearch()
+				}
 				return node
 			},
 			add: function(c) {
