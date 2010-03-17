@@ -84,42 +84,54 @@ module Forms
 			@object_type = ot
 		end
 		def to_xml
-			res = Xml.doc(Xml.element("kaisa-searcher",
-					Xml.attr("id", "searcher"),
-					Xml.attr("object-type", @object_type.system_name),
-					Xml.element("kaisa-list",
-						Xml.attr("id", "list"),
-						Xml.attr("search", "\#{searcher.search}"),
-						Xml.element("attributes",
-							Xml.attr("id", "obj"),
-							Xml.attr("names", "object"),
-							Xml.element("vbox",
-								Xml.element("collapse",
-									Xml.attr("id", "collapse"),
-										Xml.element("row",
-											@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.map do |a|
-												Xml.element("static-text",
-													if [:PARENTRELATION, :DICTIONARY].member? a.data_type
-														Xml.attr("text", "\#{obj.object.value.#{a.system_name}.text}")
-													else
-														Xml.attr("text", "\#{obj.object.value.#{a.system_name}}")
-													end)
-											end)),
-								Xml.element("lazy",
-									Xml.attr("visible", "\#{collapse.expanded}"),
-									Xml.element("vbox",
-										Xml.attr("indent", "0 0 0 2em"),
-										Xml.element("change",
-											Xml.attr("listen", "\#{obj.object}"),
-											Xml.attr("action", "collapse.setCollapsed(true)")),
-										Xml.element("kaisa-mode-list",
-											Xml.attr("object", "\#{obj.object}"),
-											Xml.element("attributes",
-												Xml.attr("id", "mode"),
-												Xml.attr("names", "view-mode"),
-												Xml.element("collapse",
+			res = Xml.doc(Xml.element("attributes",
+					Xml.attr("id", "params"),
+					Xml.attr("names", "view-mode"),
+					Xml.element("kaisa-searcher",
+						Xml.attr("id", "searcher"),
+						Xml.attr("view-mode", "\#{params.viewMode}"),
+						Xml.attr("object-type", @object_type.system_name),
+						Xml.element("kaisa-list",
+							Xml.attr("id", "list"),
+							Xml.attr("search", "\#{searcher.search}"),
+							Xml.element("attributes",
+								Xml.attr("id", "obj"),
+								Xml.attr("names", "object"),
+								Xml.element("vbox",
+									Xml.element("collapse",
+										Xml.attr("id", "collapse"),
+											Xml.element("row",
+												@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.map do |a|
 													Xml.element("static-text",
-														Xml.attr("text", "\#{mode.viewMode.label}"))))))))))))
+														if [:PARENTRELATION, :DICTIONARY].member? a.data_type
+															Xml.attr("text", "\#{obj.object.value.#{a.system_name}.text}")
+														else
+															Xml.attr("text", "\#{obj.object.value.#{a.system_name}}")
+														end)
+												end)),
+									Xml.element("lazy",
+										Xml.attr("visible", "\#{collapse.expanded}"),
+										Xml.element("vbox",
+											Xml.attr("indent", "0 0 0 2em"),
+											Xml.element("change",
+												Xml.attr("listen", "\#{obj.object}"),
+												Xml.attr("action", "collapse.setCollapsed(true)")),
+											Xml.element("kaisa-mode-list",
+												Xml.attr("object", "\#{obj.object}"),
+												Xml.element("attributes",
+													Xml.attr("id", "mode"),
+													Xml.attr("names", "view-mode"),
+													Xml.element("vbox",
+														Xml.element("collapse",
+															Xml.attr("id", "vmc"),
+															Xml.element("static-text",
+																Xml.attr("text", "\#{mode.viewMode.label}"))),
+														Xml.element("lazy",
+															Xml.attr("visible", "\#{vmc.expanded}"),
+															Xml.element("vbox",
+																Xml.attr("indent", "0 0 0 2em"),
+																Xml.element("kaisa-list-form",
+																	Xml.attr("view-mode", "\#{mode.viewMode}")))))))))))))))
 				res
 #			res = REXML::Document.new()
 #			res.add(REXML::XMLDecl.new)

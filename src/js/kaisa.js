@@ -181,11 +181,11 @@ var $kaisa = function (struct) {
 											objectType: attr_by_id[mc.attr("idAttribute")].objectType,
 											getSearchId: function(fnx) {
 												searchQuery("getViewModeXML.do",
-													$xml.element("object",
+													$xml($xml.element("object",
 														$xml.attribute("id", obj.id),
 														$xml.attribute("language", $language.current.id),
 														$xml.attribute("viewMode", mc.attr("viewMode")),
-														$xml.attribute("pageSize", "0")),
+														$xml.attribute("pageSize", "1"))),
 													function(vmnd) {
 														fnx($("objectList", vmnd).attr("searchID"))
 													})
@@ -224,7 +224,7 @@ var $kaisa = function (struct) {
 							var searchId = sr.attr("searchID")
 							var count = sr.attr("objectsFounded")
 							var page = 1
-							var pageSize = 25
+							var pageSize = 20
 							var res = {
 								getPage: function() {
 									return page
@@ -289,9 +289,15 @@ var $kaisa = function (struct) {
 					})
 			}
 			if(arguments.length>3 && arguments[3]) {
-				arguments[3].getSearchId(function(sid) {
-					parentSearchId = sid
-				})
+				if(arguments[3].getSearchId) {
+					arguments[3].getSearchId(function(sid) {
+						parentSearchId = sid
+						doSearch()
+					})
+				} else {
+					parentSearchId = arguments[3]
+					doSearch()
+				}
 			} else
 				doSearch()
 		}

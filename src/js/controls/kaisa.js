@@ -7,7 +7,7 @@ $control.register({
 		var sr = null
 		var objectType = null
 		var viewMode = null
-		
+		var searchIn = null
 		var rqid = null
 		function updateSearch() {
 			var r = rqid = $uid()
@@ -17,7 +17,7 @@ $control.register({
 							sr = s
 							res.changeSearch()
 						}
-					}, viewMode)
+					}, searchIn)
 			}
 		}
 		var res = {
@@ -52,7 +52,23 @@ $control.register({
 				sr = s
 				res.changeSearch()
 			},
-			changeSearch: $handler()
+			changeSearch: $handler(),
+			setViewMode: function(vm) {
+				viewMode = vm
+				if(vm && vm.getSearchId) {
+					vm.getSearchId(function(sid) {
+						searchIn = sid
+						updateSearch()
+					})
+				} else if(searchIn) {
+					searchIn = null
+					updateSearch()
+				}
+				return res
+			},
+			getViewMode: function() {
+				return viewMode
+			}
 		}
 		return res
 	}
@@ -238,6 +254,49 @@ $control.register({
 		return res
 	}
 })
+
+$control.register({
+	name: "kaisa-list-form",
+	create: function() {
+		var node = $("<div></div>")
+		var frm = null
+		var objectType = null
+		var viewMode = null
+		function update() {
+			if((objectType || viewMode) && !frm) {
+				var ot = objectType || viewMode.objectType
+				if(!ot.name)
+					ot = $kaisa.objectType(ot)
+				frm = $form(ot.name + "_list")
+				if(viewMode)
+					frm.setViewMode(viewMode)
+				node.append(frm.node())
+			}
+		}
+		var res = {
+			node: function() {
+				return node
+			},
+			setViewMode: function(md) {
+				viewMode = md
+				update()
+			},
+			getViewMode: function() {
+				return viewMode
+			},
+			getObjectType: function() {
+				return objectType || (viewMode && viewMode.objectType)
+			},
+			setObjectType: function(ot) {
+				objectType = ot
+				update()
+			}
+		}
+		return res
+	}
+})
+
+
 
 
 

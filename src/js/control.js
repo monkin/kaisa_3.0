@@ -19,7 +19,9 @@ $control = function(nm) {
 		if(props[name])
 			return props[name]
 		else {
-			var p_name = name.substring(0,1).toUpperCase() + name.substring(1, name.length)
+			var p_name = name.split("-").map(function(nm) {
+					return nm.substring(0,1).toUpperCase() + nm.substring(1, nm.length)
+				}).join("")
 			var bindedTo = null
 			var path = null
 			var inChange = false
