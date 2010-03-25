@@ -3,7 +3,7 @@
 $control.register({
 	name: "menu",
 	css: [".c-menu { width: 100%; overflow: hidden; }",
-		".c-menu-item { border-right-width: 0 !important; margin: 0.6em 0 0.6em 0.6em; padding: 0.1em; padding: 0.1em 0.6em 0.2em 0.6em; white-space: nowrap; cursor: pointer; }",
+		".c-menu-item { border-right-width: 0 !important; margin: 0.6em 0 0.6em 0.6em; padding: 0.1em; padding: 0.1em 0.6em 0.2em 0.6em; cursor: pointer; min-width: 200px; }",
 		".c-menu-cell { height: 100%; vertical-align: top; }",
 		".c-menu-item-active { position: relative; left: 1px; cursor: default; }",
 		".c-menu-height { height: 100%; }",

@@ -222,7 +222,10 @@ class Kaisa
 			end
 			REXML::XPath.match(node, "object/privileges/attribute").each do |attr|
 				attr_id = attr.attributes["id"]
-				(attribute(attr_id) || groups.inject(nil) { |r, g| r || g.attribute(attr_id) }).update_privileges(attr)
+				obj = (attribute(attr_id) || groups.inject(nil) { |r, g| r || g.attribute(attr_id) })
+				if obj
+					obj.update_privileges(attr)
+				end
 			end
 		end
 		def update(node, lang)
@@ -399,7 +402,7 @@ class XMLManager
 		unless File.exist? lang_file
 			begin
 				lang_stmt = get_connection.createStatement()
-				lang_set = lang_stmt.executeQuery("SELECT id, name, fdefault FROM languages")
+				lang_set = lang_stmt.executeQuery("SELECT id, name, fdefault FROM languages WHERE id=1")
 				lang_doc = REXML::Document.new("<?xml version='1.0'?><languageList/>")
 				while lang_set.next do
 					if lang_set.getInt("FDEFAULT")==1
