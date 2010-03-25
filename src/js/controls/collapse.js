@@ -4,14 +4,13 @@ $control.register({
 	name: "collapse",
 	container: true,
 	css: [".c-collapse { width: 100%; }",
-			".c-collapse-icon * { cursor: pointer }",
+			".c-collapse-button  { padding: 0 0.2em 0 0.2em; }",
 			".c-collapse-icon > div { padding: 0.2em; display: inline-block; }",
-			"c-collapse-control { width: 100%; }",
+			".c-collapse-control { width: 100%; }",
 			".c-collapse-icon { width: 0; }"].join(";\n"),
 	create: function() {
 		var node = $("<table class=\"c-collapse\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td class=\"c-collapse-button\"></td><td class=\"c-collapse-control\"></td></tr></tbody></table>")
 		var btn = $control("button").setIcon("circle-plus").setAction(function() {
-			btn.setIcon(collapsed ? "circle-minus" : "circle-plus")
 			res.setCollapsed(!collapsed)
 		})
 		$(".c-collapse-button", node).append(btn.node())
@@ -33,6 +32,7 @@ $control.register({
 			},
 			setCollapsed: function(c) {
 				collapsed = c && c!="no"
+				btn.setIcon(collapsed ? "circle-plus" : "circle-minus")
 				res.changeCollapsed()
 				return res
 			},

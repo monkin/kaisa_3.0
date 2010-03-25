@@ -14,6 +14,12 @@ $control = function(nm) {
 			if(props[i] && props[i].unbind)
 				props[i].unbind()
 		}
+		if(res._children)
+			res._children._each(function(c) {
+				if(c && c.remove)
+					c.remove()
+			})
+		res._children = null
 	}
 	res.property = function(name) {
 		if(props[name])
@@ -31,7 +37,7 @@ $control = function(nm) {
 				else {
 					try {
 						inChange = true
-						if(p.set)
+						if(p.set && bindedTo)
 							p.set(bindedTo.get())
 					} finally {
 						inChange = false
@@ -164,6 +170,7 @@ $control.fromDom = function(node/*, context*/) {
 		throw new Error("Can't create control: " + node.nodeName)
 	}
 	res = $control(node.nodeName)
+	res._children = []
 	if(node.getAttribute("id"))
 		context[node.getAttribute("id")] = res
 	var attrs = node.attributes
@@ -193,6 +200,7 @@ $control.fromDom = function(node/*, context*/) {
 				if(c_class.container) {
 					res.add(function() {
 						var c = $control.fromDom(i, context)
+						res._children.push(c)
 						if(i.getAttribute("id"))
 							context[i.getAttribute("id")] = c
 						return c
@@ -210,6 +218,7 @@ $control.fromDom = function(node/*, context*/) {
 								val.control = (function(cNode) {
 										return function() {
 												var r = $control.fromDom(cNode, context)
+												res._children.push(r)
 												if(cNode.getAttribute("id"))
 													context[cNode.getAttribute("id")] = r
 												return r
