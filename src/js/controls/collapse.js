@@ -9,17 +9,14 @@ $control.register({
 			"c-collapse-control { width: 100%; }",
 			".c-collapse-icon { width: 0; }"].join(";\n"),
 	create: function() {
-		var node = $("<table class=\"c-collapse\"><tbody><tr><td class=\"c-collapse-icon\"><div class=\"ui-corner-all ui-state-default\"><span class=\"ui-icon ui-icon-circle-plus\"></span></div></td><td class=\"c-collapse-control\"></td></tr></tbody></table>")
-		var icon = $(".ui-icon", node)
+		var node = $("<table class=\"c-collapse\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td class=\"c-collapse-button\"></td><td class=\"c-collapse-control\"></td></tr></tbody></table>")
+		var btn = $control("button").setIcon("circle-plus").setAction(function() {
+			btn.setIcon(collapsed ? "circle-minus" : "circle-plus")
+			res.setCollapsed(!collapsed)
+		})
+		$(".c-collapse-button", node).append(btn.node())
 		var control = null
 		var collapsed = true
-		icon.parent().click(function() {
-				res.setCollapsed(!collapsed)
-			}).hover(function() {
-				$(this).addClass("ui-state-hover").removeClass("ui-state-default")
-			}, function() {
-				$(this).removeClass("ui-state-hover").addClass("ui-state-default")
-			})
 		var res = {
 			node: function() {
 				return node
@@ -36,10 +33,6 @@ $control.register({
 			},
 			setCollapsed: function(c) {
 				collapsed = c && c!="no"
-				if(collapsed)
-					icon.addClass("ui-icon-circle-plus").removeClass("ui-icon-circle-minus")
-				else
-					icon.removeClass("ui-icon-circle-plus").addClass("ui-icon-circle-minus")
 				res.changeCollapsed()
 				return res
 			},

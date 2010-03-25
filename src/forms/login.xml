@@ -12,16 +12,18 @@
 						<password value="#{f.password}" password="yes"/>
 					</field>
 				</form>
-				<button-set>
-					<button label="loginForm.loginBtn">
-						$kaisa.login(f.getLogin(), f.getPassword(), function(r) {
-							login.setOk(r)
-							error.setVisible(!r)
-							if(r)
-								login.setVisible(false)
-						})
+				<hbox align="right">
+					<button caption="loginForm.loginBtn" icon="document">
+						<action>
+							$kaisa.login(f.getLogin(), f.getPassword(), function(r) {
+								login.setOk(r)
+								error.setVisible(!r)
+								if(r)
+									login.setVisible(false)
+							})
+						</action>
 					</button>
-				</button-set>
+				</hbox>
 			</vbox>
 		</window>
 	</attributes>

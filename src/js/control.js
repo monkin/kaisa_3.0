@@ -229,13 +229,17 @@ $control.fromDom = function(node/*, context*/) {
 		})(_i)
 	}
 	res.context_eval = function(s) {
-		var names = []
-		var args = []
-		for(var i in context) {
-			names.push(i)
-			args.push(context[i])
+		if(typeof s == "string") {
+			var names = []
+			var args = []
+			for(var i in context) {
+				names.push(i)
+				args.push(context[i])
+			}
+			return eval("(function(" + names.join(", ") + ") {\n" + s + "\n})").apply(res, args)
+		} else if(typeof s == "function") {
+			s($.extend({}, context))
 		}
-		return eval("(function(" + names.join(", ") + ") {\n" + s + "\n})").apply(res, args)
 	}
 	return res
 }

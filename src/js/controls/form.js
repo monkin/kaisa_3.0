@@ -3,8 +3,6 @@
 $control.register({
 	name: "form",
 	css: [".c-form { display: inline-table; border-color: transparent; }",
-		/*".c-form-body { width: 100%; }",
-		".c-form-row { width: 100%; }",*/
 		".c-form-label { padding: 0.2em 2em 0.2em 0.2em; }",
 		".c-form-control { padding: 0.2em; }"].join(";\n"),
 	create: function() {

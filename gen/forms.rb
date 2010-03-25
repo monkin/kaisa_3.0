@@ -100,15 +100,18 @@ module Forms
 								Xml.element("vbox",
 									Xml.element("collapse",
 										Xml.attr("id", "collapse"),
-											Xml.element("row",
-												@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.map do |a|
-													Xml.element("static-text",
-														if [:PARENTRELATION, :DICTIONARY].member? a.data_type
-															Xml.attr("text", "\#{obj.object.value.#{a.system_name}.text}")
-														else
-															Xml.attr("text", "\#{obj.object.value.#{a.system_name}}")
-														end)
-												end)),
+										Xml.element("list-buttons",
+											Xml.element("control",
+												Xml.element("row",
+													@object_type.attributes.find_all { |a| a.privileges.member? :LIST }.map do |a|
+														Xml.element("static-text",
+															if [:PARENTRELATION, :DICTIONARY].member? a.data_type
+																Xml.attr("text", "\#{obj.object.value.#{a.system_name}.text}")
+															else
+																Xml.attr("text", "\#{obj.object.value.#{a.system_name}}")
+															end)
+													end)),
+											Xml.element("button", Xml.attr("icon", "document")))),
 									Xml.element("lazy",
 										Xml.attr("visible", "\#{collapse.expanded}"),
 										Xml.element("vbox",

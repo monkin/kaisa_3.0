@@ -6,6 +6,7 @@ $control.register({
 		var gap = "0"
 		var node = $("<div class=\"hbox\"></div>").css("white-space", "nowrap")
 		var children = []
+		var align = "left"
 		var res = {
 			node: function() {
 				return node
@@ -30,6 +31,16 @@ $control.register({
 				c.node().remove()
 				setGap(gap)
 				return res
+			},
+			getAlign: function() {
+				return align
+			},
+			setAlign: function(a) {
+				align = a
+				if(a=="left" || a=="right")
+					node.css("text-align", a)
+				else
+					throw new Error("Invalid align: \"" + a + "\"")
 			},
 			panel: function(i) {
 				return children[i].node().parent()
