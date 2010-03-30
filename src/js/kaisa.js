@@ -217,7 +217,14 @@ var $kaisa = function (struct) {
 					$xml($xml.element("filter",
 						$xml.attribute("objectType", ot.id),
 						$xml.attribute("language", $language.current.id),
-						parentSearchId ? $xml.attribute("searchID", parentSearchId) : [])),
+						parentSearchId ? $xml.attribute("searchID", parentSearchId) : [],
+						params._map(function(p) {
+						return $xml.element("attribute",
+								$xml.attribute("id", p.attribute.id),
+								$xml.attribute("condition", p.condition ? p.condition : p.attribute.conditions.byDefault),
+								$xml.attribute("text-value", p.textValue ? p.textValue : ""),
+								$xml.attribute("dictionary-value",  p.dictionaryValue ? p.dictionaryValue : ""))
+						}))),
 					function(nd) {
 						if(nd) {
 							var sr = $("searchReply", nd)

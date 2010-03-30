@@ -13,7 +13,7 @@
 					</field>
 				</form>
 				<hbox align="right">
-					<button caption="loginForm.loginBtn" icon="document">
+					<button caption="loginForm.loginBtn">
 						<action>
 							$kaisa.login(f.getLogin(), f.getPassword(), function(r) {
 								login.setOk(r)

@@ -2,18 +2,52 @@
 $control.register({
 	name: "kaisa-searcher",
 	container: true,
+	css: ".c-kaisa-searcher-filter { margin-bottom: 0.3em; padding: 0.4em; display: none; }",
 	create: function() {
-		var node = $("<div class=\"c-kaisa-searcher\"></div>")
+		var node = $("<div class=\"c-kaisa-searcher\"><div class=\"c-kaisa-searcher-filter ui-corner-all ui-widget-header\"></div><div class=\"c-kaisa-searcher-control\"></div></div>")
 		var sr = null
 		var objectType = null
 		var viewMode = null
 		var searchIn = null
 		var rqid = null
+		var searchAttribute = null
 		var ignoreSearch = true
+		var control_node = $(".c-kaisa-searcher-control", node)
+		var filter_node = $(".c-kaisa-searcher-filter", node)
+		var searcherInitialized = false
+		var searchParams = [null]
+		function updateSearcher() {
+			if(objectType && searchAttribute && !searcherInitialized) {
+				searcherInitialized = true
+				var simpleSearch = $control("string")
+				var searchNd = $("<table><tr><td class=\"kaisa-searcher-simple\"></td><td></td></tr></table>")
+				filter_node.css("display", "block").append(searchNd)
+				$(".kaisa-searcher-simple", searchNd).append(simpleSearch.node())
+				var last_action_id = null
+				var last_value = null
+				simpleSearch.changeValue.add(function () {
+					var action_id = last_action_id = $uid()
+					setTimeout(function() {
+							if(action_id==last_action_id && last_value!=simpleSearch.getValue()) {
+								last_value = simpleSearch.getValue()
+								if(simpleSearch.getValue() && simpleSearch.getValue().length>=3) {
+									searchParams[0] = {
+										attribute: objectType.attr_by_name[searchAttribute],
+										condition: 12,
+										textValue: simpleSearch.getValue()
+									}
+								} else
+									searchParams[0] = null
+								updateSearch()
+							}
+						}, 300)
+				})
+			}
+		}
 		function updateSearch() {
 			var r = rqid = $uid()
 			if(objectType && !ignoreSearch) {
-				$kaisa.search(objectType, [], function(s) {
+				$kaisa.search(objectType, searchParams._filter(function(p) { return p; }), function(s) {
 						if(r==rqid) {
 							sr = s
 							res.changeSearch()
@@ -30,7 +64,15 @@ $control.register({
 				return node
 			},
 			add: function(c) {
-				node.append($control.get(c).node())
+				control_node.append($control.get(c).node())
+			},
+			getSearchAttribute: function() {
+				return searchAttribute
+			},
+			setSearchAttribute: function(sa) {
+				searchAttribute = sa
+				updateSearcher()
+				return res
 			},
 			setViewMode: function(vm) {
 				viewMode = vm
@@ -46,7 +88,8 @@ $control.register({
 				else
 					objectType = ot
 				updateSearch()
-			},			
+				updateSearcher()
+			},
 			getObjectType: function() {
 				return objectType
 			},

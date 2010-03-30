@@ -25,6 +25,7 @@ module Resource
 			res
 		end
 	end
+	
 	class RSet
 		attr_reader :name, :children
 		def initialize(name, *children)
@@ -47,6 +48,7 @@ module Resource
 			res
 		end
 	end
+	
 	class RString
 		attr_reader :name, :value
 		def initialize(nm, val)
@@ -99,7 +101,25 @@ class Kaisa
 			ObjectType.new(nd).set_parent(self)
 		end
 		
+		@conditions = REXML::XPath.match(xm.conditions(@languages.first.id), "conditionList/condition").map { |nd|
+				return {
+					:id => nd.attributes["id"],
+					:name => {},
+					:attribute => nd.attributes["idAttribute"],
+					:isDefault => nd.attributes["fdefault"]=="1"
+				}
+			}.inject({}) { |r, c|
+				r[c[:attribute]] = [] if r[c[:attribute]].nil?
+				r[c[:attribute]].push c
+				r
+			}
+		
 		@languages.each do |lang|
+			REXML::XPath.match(xm.conditions(lang.id), "conditionList/condition") do |nd|
+				@conditions[nd.attributes["idAttribute"]].find { |c|
+					c[:id] == nd.attributes["idAttribute"]
+				}[:name][lang.id] = nd.attributes["value"]
+			end
 			REXML::XPath.match(xm.object_types(lang.id), "objectTypeList/objectType").map do |nd|
 				self.type(nd.attribute("id").value).update(nd, lang)
 			end
@@ -304,7 +324,8 @@ class Kaisa
 				"required" => attr.required,
 				"privileges" => attr.privileges,
 				"ref_type" => attr.connected_type,
-				"ref_attr" => attr.connected_attribute
+				"ref_attr" => attr.connected_attribute,
+				"conditions" => @condirins[attr.id]
 			}
 			res["connected_type"] = attr.connected_type if attr.connected_type
 			res["connected_attribute"] = attr.connected_attribute if attr.connected_attribute

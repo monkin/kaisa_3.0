@@ -84,11 +84,15 @@ module Forms
 			@object_type = ot
 		end
 		def to_xml
+			search_attr = @object_type.attributes.find { |a|
+					([:COLOB, :REFERENCE, :VARCHAR2].member? a.data_type) && (a.privileges.member? :LIST)
+				}
 			res = Xml.doc(Xml.element("attributes",
 					Xml.attr("id", "params"),
 					Xml.attr("names", "view-mode"),
 					Xml.element("kaisa-searcher",
 						Xml.attr("id", "searcher"),
+						search_attr ? Xml.attr("search-attribute", search_attr.system_name) : [],
 						Xml.attr("view-mode", "\#{params.viewMode}"),
 						Xml.attr("object-type", @object_type.system_name),
 						Xml.element("kaisa-list",

@@ -2,9 +2,9 @@
 
 $control.register({
 	name: "string",
-	css: ".c-string { width: 20em; }",
+	css: ".c-string { width: 20em; padding: 2px; }",
 	create: function() {
-		var node = $("<input class=\"c-string\" type=\"text\"/>").bind("change keyup", function(e) {
+		var node = $("<input class=\"c-string ui-widget-content ui-corner-all\" type=\"text\"/>").bind("change keyup", function(e) {
 			res.changeValue()
 			e.preventDefault()
 			e.stopImmediatePropagation()
@@ -29,9 +29,9 @@ $control.register({
 
 $control.register({
 	name: "password",
-	css: ".c-password { width: 20em; }",
+	css: ".c-password { width: 20em; padding: 2px; }",
 	create: function() {
-		var node = $("<input class=\"c-password\" type=\"password\"/>").bind("change keyup", function(e) {
+		var node = $("<input class=\"c-password ui-widget-content ui-corner-all\" type=\"password\"/>").bind("change keyup", function(e) {
 			res.changeValue()
 			e.preventDefault()
 			e.stopImmediatePropagation()
