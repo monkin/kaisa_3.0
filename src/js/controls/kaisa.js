@@ -2,7 +2,8 @@
 $control.register({
 	name: "kaisa-searcher",
 	container: true,
-	css: ".c-kaisa-searcher-filter { margin-bottom: 0.3em; padding: 0.4em; display: none; }",
+	css: [".c-kaisa-searcher-filter { margin-bottom: 0.3em; padding: 0.4em; display: none; }",
+		".kaisa-searcher-btn { width: 100%; text-align: left; }"].join(";\n"),
 	create: function() {
 		var node = $("<div class=\"c-kaisa-searcher\"><div class=\"c-kaisa-searcher-filter ui-corner-all ui-widget-header\"></div><div class=\"c-kaisa-searcher-control\"></div></div>")
 		var sr = null
@@ -16,13 +17,35 @@ $control.register({
 		var filter_node = $(".c-kaisa-searcher-filter", node)
 		var searcherInitialized = false
 		var searchParams = [null]
+		
 		function updateSearcher() {
 			if(objectType && searchAttribute && !searcherInitialized) {
 				searcherInitialized = true
 				var simpleSearch = $control("string")
-				var searchNd = $("<table><tr><td class=\"kaisa-searcher-simple\"></td><td></td></tr></table>")
+				var searchNd = $("<table>" +
+					"<tr><td class=\"kaisa-searcher-simple\"></td><td class=\"kaisa-searcher-btn\"></td></tr>" +
+					"<tr class=\"kaisa-searcher-advanced\" style=\"display: none\"><td class=\"kaisa-searcher-advanced-cell\" colspan=\"2\"></dt></tr>" +
+					"</table>")
+				var expanded = false
+				var advanced_row = $(".kaisa-searcher-advanced", searchNd)
+				var advanced_cell = $(".kaisa-searcher-advanced-cell", searchNd)
+				var expand_btn = $control("button").setIcon("circle-plus").setAction(function() {
+						expanded = !expanded
+						expand_btn.setIcon(expanded ? "circle-minus" : "circle-plus")
+						advanced_row.css("display", expanded ? "table-row" : "none")
+						advanced_cell.children().remove()
+						if(expanded) {
+							advanced_cell.append($control("condition").setObjectType(objectType).node())
+						} else {
+							searchParams = [searchParams[0]]
+							updateSearch()
+						}
+					})
+				$(".kaisa-searcher-btn", searchNd).append(expand_btn.node())
 				filter_node.css("display", "block").append(searchNd)
 				$(".kaisa-searcher-simple", searchNd).append(simpleSearch.node())
+				
+				
 				var last_action_id = null
 				var last_value = null
 				simpleSearch.changeValue.add(function () {

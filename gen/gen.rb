@@ -101,20 +101,23 @@ class Kaisa
 			ObjectType.new(nd).set_parent(self)
 		end
 		
-		@conditions = REXML::XPath.match(xm.conditions(@languages.first.id), "conditionList/condition").map { |nd|
-				return {
+		@conditions = REXML::XPath.match(xm.conditions(@languages.first.id), "conditionList/condition").map { |nd| {
 					:id => nd.attributes["id"],
 					:name => {},
 					:attribute => nd.attributes["idAttribute"],
 					:isDefault => nd.attributes["fdefault"]=="1"
+				} }.inject({}) { |r, c|
+					r[c[:attribute]] = [] if r[c[:attribute]].nil?
+					r[c[:attribute]].push c
+					r
 				}
-			}.inject({}) { |r, c|
-				r[c[:attribute]] = [] if r[c[:attribute]].nil?
-				r[c[:attribute]].push c
-				r
-			}
 		
 		@languages.each do |lang|
+			REXML::XPath.match(xm.conditions(lang.id), "conditionList/condition").map do |nd|
+				@conditions[nd.attributes["idAttribute"]].each do |c|
+				 	c[:name][lang.id] = nd.attributes["value"] if c[:id]==nd.attributes["id"]
+				end
+			end
 			REXML::XPath.match(xm.conditions(lang.id), "conditionList/condition") do |nd|
 				@conditions[nd.attributes["idAttribute"]].find { |c|
 					c[:id] == nd.attributes["idAttribute"]
@@ -325,7 +328,7 @@ class Kaisa
 				"privileges" => attr.privileges,
 				"ref_type" => attr.connected_type,
 				"ref_attr" => attr.connected_attribute,
-				"conditions" => @condirins[attr.id]
+				"conditions" => @conditions[attr.id]
 			}
 			res["connected_type"] = attr.connected_type if attr.connected_type
 			res["connected_attribute"] = attr.connected_attribute if attr.connected_attribute
@@ -411,7 +414,9 @@ class XMLManager
 	
 	def conditions(lang_id)
 		xml = get_xml("userxmlfactory.getallconditionlistxml()", "conditions.xml")
-		xml.delete_element("/conditionList/condition[@idLanguage!='#{lang_id}']")
+		xml.each_element("/conditionList/condition[@idLanguage!='#{lang_id}']") do |nd|
+			nd.parent.delete(nd)
+		end
 		REXML::XPath.match(xml, "/conditionList/condition").each do |nd|
 			nd.delete_attribute("idLanguage")
 		end
